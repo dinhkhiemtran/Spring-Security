@@ -14,9 +14,9 @@ public class GlobalException {
   public ResponseEntity<String> illegalArgumentExceptionHandler(IllegalArgumentException exception) {
     return ResponseEntity.badRequest().body(exception.getMessage());
   }
-  @ExceptionHandler(UsernameNotFoundException.class)
+  @ExceptionHandler(EmailNotFoundException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<String> emailNotFoundExceptionHandler(UsernameNotFoundException usernameNotFoundException) {
-    return ResponseEntity.badRequest().body(usernameNotFoundException.getMessage());
+  public ResponseEntity<String> emailNotFoundExceptionHandler(EmailNotFoundException emailNotFoundException) {
+    return ResponseEntity.badRequest().body(emailNotFoundException.getMessage());
   }
 }
