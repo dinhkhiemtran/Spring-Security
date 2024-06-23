@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: "spring-security"
+    jwt-secret: "9a02115a835ee03d5fb83cd8a468ea33e4090aaaec87f53c9fa54512bbef4db8dc656c82a315fa0c785c08b0134716b81ddcd0153d2a7556f2e154912cf5675f"
+    path-allowed:
+      - /greeting/**
+      - /api/v1/sign-up
+      - /api/v1/login
+      - /h2-console/**
+
+  h2:
+    console:
+      enabled: "true"
+
+  datasource:
+    url: "jdbc:h2:mem:testdb"
+    driverClassName: "org.h2.Driver"
+    username: "sa"
+    password: "password"
+
+  jpa:
+    database-platform: "org.hibernate.dialect.H2Dialect"
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: "always"
+
+logging:
+  level:
+    org:
+      springframework:
+        web=DEBUG:
