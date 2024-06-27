@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 class GreetingControllerTest {
-  private final static String REQUEST_MAPPING = "/api/v1";
+  private final static String REQUEST_MAPPING = "/greeting";
   @InjectMocks
   private GreetingController greetingController;
   private MockMvc mockMvc;
@@ -30,9 +30,9 @@ class GreetingControllerTest {
   @Test
   public void getGreeting() {
     try {
-      mockMvc.perform(MockMvcRequestBuilders.get(REQUEST_MAPPING + "/hello"))
+      mockMvc.perform(MockMvcRequestBuilders.get(REQUEST_MAPPING))
           .andExpect(MockMvcResultMatchers.status().isOk())
-          .andExpect(MockMvcResultMatchers.content().string("Hello World"));
+          .andExpect(MockMvcResultMatchers.content().string("Welcome to my tutorials."));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -44,7 +44,7 @@ class GreetingControllerTest {
       String s = REQUEST_MAPPING + "/{name}";
       mockMvc.perform(MockMvcRequestBuilders.get(s, "Alice"))
           .andExpect(MockMvcResultMatchers.status().isOk())
-          .andExpect(MockMvcResultMatchers.content().string("Hello Alice"));
+          .andExpect(MockMvcResultMatchers.content().string("Hello Alice! Welcome to my tutorials."));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

@@ -28,12 +28,12 @@ public class UserController {
                                            @RequestBody @Valid UserRequest userRequest) {
     UserRequest userRequestSanitized = userRequest.sanitize(userRequest);
     userService.updateUser(SanitizerUtils.sanitizeString(email), userRequestSanitized);
-    return ResponseEntity.ok("User updated successfully.");
+    return ResponseEntity.ok("User is updated successfully.");
   }
 
   @DeleteMapping(path = "/user/{email}")
   public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
     userService.remove(SanitizerUtils.sanitizeString(email));
-    return ResponseEntity.ok("User removed successfully.");
+    return ResponseEntity.ok("User is removed successfully.");
   }
 }

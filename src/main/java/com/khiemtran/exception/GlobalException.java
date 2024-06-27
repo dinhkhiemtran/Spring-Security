@@ -25,7 +25,13 @@ public class GlobalException {
   @ExceptionHandler(EmailNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ResponseEntity<String> emailNotFoundExceptionHandler(EmailNotFoundException emailNotFoundException) {
-    return ResponseEntity.badRequest().body(emailNotFoundException.getMessage());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(emailNotFoundException.getMessage());
+  }
+
+  @ExceptionHandler(RoleNotFoundException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ResponseEntity<String> roleNotFoundExceptionHandler(RoleNotFoundException exception) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

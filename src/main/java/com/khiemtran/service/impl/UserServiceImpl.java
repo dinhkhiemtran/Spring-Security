@@ -5,6 +5,7 @@ import com.khiemtran.dto.request.UserRequest;
 import com.khiemtran.dto.response.AccessToken;
 import com.khiemtran.dto.response.UserResponse;
 import com.khiemtran.exception.EmailNotFoundException;
+import com.khiemtran.exception.RoleNotFoundException;
 import com.khiemtran.model.Role;
 import com.khiemtran.model.User;
 import com.khiemtran.repository.RoleRepository;
@@ -39,19 +40,18 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse create(SignUpRequest request) {
     if (userRepository.existsByEmail(request.email())) {
-      throw new IllegalArgumentException("User has already exist");
+      throw new EmailNotFoundException("User has already exist.");
     }
     Role roles = roleRepository.findByName(ROLE_ADMIN)
-        .orElseThrow(IllegalArgumentException::new);
-    User user = new User(
+        .orElseThrow(() -> new RoleNotFoundException("User's Role not set."));
+    User user = userRepository.save(new User(
         request.username(),
         passwordEncoder.encode(request.password()),
         request.email(),
         request.zipCode(),
         request.city(),
         Collections.singleton(roles)
-    );
-    userRepository.save(user);
+    ));
     return new UserResponse(user.getUsername(), user.getEmail(), user.getZipCode(), user.getCity());
   }
 
@@ -73,8 +73,9 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new EmailNotFoundException("User not found with email: " + email));
     user.setUsername(Optional.ofNullable(userRequest.username())
         .orElse(user.getUsername()));
-    user.setPassword(Optional.ofNullable(userRequest.password())
-        .orElse(user.getPassword()));
+    user.setPassword(
+        Optional.ofNullable(passwordEncoder.encode(userRequest.password()))
+            .orElse(user.getPassword()));
     user.setEmail(Optional.ofNullable(userRequest.email())
         .orElse(user.getEmail()));
     user.setZipCode(Optional.ofNullable(userRequest.zipCode())
