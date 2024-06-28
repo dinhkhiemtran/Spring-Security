@@ -1,4 +1,4 @@
-package com.khiemtran.security.controller;
+package com.khiemtran.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khiemtran.controller.UserController;

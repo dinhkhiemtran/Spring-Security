@@ -12,7 +12,7 @@ public class ValidationErrorResponse {
 
   public ValidationErrorResponse(List<ObjectError> allErrors) {
     this.fieldErrors = allErrors.stream()
-        .map(objectError -> new FieldError(objectError.getDefaultMessage()))
+        .map(field -> new FieldError(field.getDefaultMessage()))
         .collect(Collectors.toList());
   }
 }

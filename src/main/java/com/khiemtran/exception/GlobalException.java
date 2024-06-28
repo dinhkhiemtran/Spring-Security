@@ -2,7 +2,6 @@ package com.khiemtran.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -18,54 +17,55 @@ import java.util.List;
 public class GlobalException {
   @ExceptionHandler(IllegalArgumentException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<String> illegalArgumentExceptionHandler(IllegalArgumentException exception) {
-    return ResponseEntity.badRequest().body(exception.getMessage());
+  public ModelException illegalArgumentExceptionHandler(IllegalArgumentException exception) {
+    return new ModelException(exception.getMessage(), exception.getCause(), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(EmailNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ResponseEntity<String> emailNotFoundExceptionHandler(EmailNotFoundException emailNotFoundException) {
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(emailNotFoundException.getMessage());
+  public ModelException emailNotFoundExceptionHandler(EmailNotFoundException emailNotFoundException) {
+    return new ModelException(emailNotFoundException.getMessage(), emailNotFoundException.getCause(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(RoleNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ResponseEntity<String> roleNotFoundExceptionHandler(RoleNotFoundException exception) {
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
+  public ModelException roleNotFoundExceptionHandler(RoleNotFoundException exception) {
+    return new ModelException(exception.getMessage(), exception.getCause(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ValidationErrorResponse> methodArgumentNotValidExceptionHandler(
+  public ValidationErrorResponse methodArgumentNotValidExceptionHandler(
       MethodArgumentNotValidException methodArgumentNotValidException) {
     List<ObjectError> allErrors = methodArgumentNotValidException.getAllErrors();
-    ValidationErrorResponse validationErrorResponse = new ValidationErrorResponse(allErrors);
-    return ResponseEntity.badRequest().body(validationErrorResponse);
+    return new ValidationErrorResponse(allErrors);
   }
 
   @ExceptionHandler(JwKeyNotRegisteredException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public String jwKeyNotRegisteredExceptionHandler(JwKeyNotRegisteredException jwKeyNotRegisteredException) {
-    return jwKeyNotRegisteredException.getMessage();
+  public ModelException jwKeyNotRegisteredExceptionHandler(JwKeyNotRegisteredException jwKeyNotRegisteredException) {
+    return new ModelException(jwKeyNotRegisteredException.getMessage(),
+        jwKeyNotRegisteredException.getCause(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public String usernameNotFoundException(UsernameNotFoundException usernameNotFoundException) {
-    return usernameNotFoundException.getMessage();
+  public ModelException usernameNotFoundException(UsernameNotFoundException usernameNotFoundException) {
+    return new ModelException(usernameNotFoundException.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public String httpRequestMethodNotSupportedExceptionHandler(
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ModelException httpRequestMethodNotSupportedExceptionHandler(
       HttpRequestMethodNotSupportedException httpRequestMethodNotSupportedException) {
-    return httpRequestMethodNotSupportedException.getMessage();
+    return new ModelException(httpRequestMethodNotSupportedException.getMessage(), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(NoResourceFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public String noResourceFoundException(NoResourceFoundException noResourceFoundException) {
-    return noResourceFoundException.getMessage();
+  public ModelException noResourceFoundException(NoResourceFoundException noResourceFoundException) {
+    return new ModelException(noResourceFoundException.getMessage(),
+        noResourceFoundException.getCause(), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)

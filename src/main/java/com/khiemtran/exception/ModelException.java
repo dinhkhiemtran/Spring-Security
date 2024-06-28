@@ -1,17 +1,35 @@
 package com.khiemtran.exception;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
-public class ModelException extends RuntimeException {
+@Data
+@RequiredArgsConstructor
+public class ModelException {
+  private String message;
+  private Throwable throwable;
+  private HttpStatus httpStatus;
+  private ValidationErrorResponse validationErrorResponse;
+
   public ModelException(String message) {
-    super(message);
+    this.message = message;
+  }
+
+  public ModelException(String message, HttpStatus httpStatus) {
+    this.message = message;
+    this.httpStatus = httpStatus;
   }
 
   public ModelException(String message, Throwable cause) {
-    super(message, cause);
+    this.message = message;
+    this.throwable = cause;
   }
 
-  public ModelException(ValidationErrorResponse validationErrorResponse) {
+  public ModelException(String message, Throwable throwable, HttpStatus httpStatus) {
+    this.message = message;
+    this.throwable = throwable;
+    this.httpStatus = httpStatus;
   }
 }
 

@@ -2,6 +2,7 @@ package com.khiemtran.service.impl;
 
 import com.khiemtran.dto.request.SignUpRequest;
 import com.khiemtran.dto.request.UserRequest;
+import com.khiemtran.dto.response.AccessToken;
 import com.khiemtran.dto.response.UserResponse;
 import com.khiemtran.exception.EmailNotFoundException;
 import com.khiemtran.exception.RoleNotFoundException;
@@ -20,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -116,7 +118,7 @@ class UserServiceImplTest {
 
   @Test
   public void getAllUser() {
-    User user1 = new User("test", "test", "test@mail.com", "test","tes", Set.of(role));
+    User user1 = new User("test", "test", "test@mail.com", "test", "tes", Set.of(role));
     Mockito.when(userRepository.findAll()).thenReturn(List.of(user, user1));
     List<UserResponse> actual = userService.getAllUsers();
     Assertions.assertEquals(2, actual.size());
@@ -159,5 +161,16 @@ class UserServiceImplTest {
     Mockito.when(userRepository.findByEmail(ArgumentMatchers.anyString())).thenReturn(Optional.of(user));
     userService.remove(signUpRequest.email());
     Assertions.assertEquals(signUpRequest.email(), userRequest.email());
+  }
+
+  @Test
+  public void getAccessToken() {
+    AccessToken expect = new AccessToken("accessToken", 500L);
+    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(signUpRequest.email(), signUpRequest.password());
+    Mockito.when(authenticationManager.authenticate(ArgumentMatchers.any())).thenReturn(usernamePasswordAuthenticationToken);
+    Mockito.when(jwtProvider.generateToken(ArgumentMatchers.any())).thenReturn(expect);
+    AccessToken actual = userService.getAccessToken(signUpRequest.email(), signUpRequest.password());
+    Assertions.assertEquals(expect.accessToken(), actual.accessToken());
+    Assertions.assertEquals(expect.expiryDate(), actual.expiryDate());
   }
 }

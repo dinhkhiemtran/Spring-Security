@@ -1,4 +1,4 @@
-package com.khiemtran.security.controller;
+package com.khiemtran.controller;
 
 import com.khiemtran.controller.GreetingController;
 import org.junit.jupiter.api.BeforeEach;

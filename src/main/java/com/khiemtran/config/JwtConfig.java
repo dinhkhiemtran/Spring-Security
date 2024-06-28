@@ -4,9 +4,10 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@ConfigurationProperties(prefix = "spring.application")
 @Component
+@ConfigurationProperties(prefix = "spring.application.jwt")
 @Data
-public class YamlConfig {
-  private String[] pathAllowed;
+public class JwtConfig {
+  private String jwtSecret;
+  private long expireTime;
 }

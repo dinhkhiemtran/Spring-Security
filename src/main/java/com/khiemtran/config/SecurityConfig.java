@@ -1,6 +1,5 @@
-package com.khiemtran.security;
+package com.khiemtran.config;
 
-import com.khiemtran.config.YamlConfig;
 import com.khiemtran.security.filter.JwtAuthenticationFilter;
 import com.khiemtran.security.service.UserDetailsServiceImp;
 import com.khiemtran.utils.SecretKeySecretUtil;
@@ -18,7 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Configuration
@@ -30,8 +32,7 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    String[] pathAllowed = Optional.ofNullable(yamlConfig.getPathAllowed())
-        .orElse(new String[0]);
+    RequestMatcher[] pathAllowed = getRequestMatchers();
     return httpSecurity.cors(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth ->
@@ -45,6 +46,13 @@ public class SecurityConfig {
         .sessionManagement(sessionManagementConfigurer ->
             sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).build();
+  }
+
+  private RequestMatcher[] getRequestMatchers() {
+    return Arrays.stream(Optional.ofNullable(yamlConfig.getPathAllowed())
+            .orElse(new String[0]))
+        .map(AntPathRequestMatcher::antMatcher)
+        .toArray(RequestMatcher[]::new);
   }
 
   @Bean
