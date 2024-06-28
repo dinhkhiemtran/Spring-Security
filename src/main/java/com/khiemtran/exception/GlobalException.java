@@ -18,19 +18,19 @@ public class GlobalException {
   @ExceptionHandler(IllegalArgumentException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ModelException illegalArgumentExceptionHandler(IllegalArgumentException exception) {
-    return new ModelException(exception.getMessage(), exception.getCause(), HttpStatus.BAD_REQUEST);
+    return new ModelException(exception.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(EmailNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ModelException emailNotFoundExceptionHandler(EmailNotFoundException emailNotFoundException) {
-    return new ModelException(emailNotFoundException.getMessage(), emailNotFoundException.getCause(), HttpStatus.UNAUTHORIZED);
+    return new ModelException(emailNotFoundException.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(RoleNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ModelException roleNotFoundExceptionHandler(RoleNotFoundException exception) {
-    return new ModelException(exception.getMessage(), exception.getCause(), HttpStatus.UNAUTHORIZED);
+    return new ModelException(exception.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,8 +44,7 @@ public class GlobalException {
   @ExceptionHandler(JwKeyNotRegisteredException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ModelException jwKeyNotRegisteredExceptionHandler(JwKeyNotRegisteredException jwKeyNotRegisteredException) {
-    return new ModelException(jwKeyNotRegisteredException.getMessage(),
-        jwKeyNotRegisteredException.getCause(), HttpStatus.UNAUTHORIZED);
+    return new ModelException(jwKeyNotRegisteredException.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(UsernameNotFoundException.class)
@@ -64,8 +63,7 @@ public class GlobalException {
   @ExceptionHandler(NoResourceFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ModelException noResourceFoundException(NoResourceFoundException noResourceFoundException) {
-    return new ModelException(noResourceFoundException.getMessage(),
-        noResourceFoundException.getCause(), HttpStatus.NOT_FOUND);
+    return new ModelException(noResourceFoundException.getMessage(), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
