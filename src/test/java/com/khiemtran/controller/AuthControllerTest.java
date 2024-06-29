@@ -39,7 +39,7 @@ class AuthControllerTest {
     mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
     ReflectionTestUtils.setField(authController, "userService", userService);
     signUpRequest = new SignUpRequest("username", "password",
-        "email@mail.com", "zipcode", "city");
+        "email@mail.com", "12345", "city");
   }
 
   @Test

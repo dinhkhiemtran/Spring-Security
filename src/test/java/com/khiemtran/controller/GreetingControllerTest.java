@@ -1,6 +1,5 @@
 package com.khiemtran.controller;
 
-import com.khiemtran.controller.GreetingController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,7 @@ class GreetingControllerTest {
     try {
       mockMvc.perform(MockMvcRequestBuilders.get(REQUEST_MAPPING))
           .andExpect(MockMvcResultMatchers.status().isOk())
-          .andExpect(MockMvcResultMatchers.content().string("Welcome to my tutorials."));
+          .andExpect(MockMvcResultMatchers.content().string("Hello you, Welcome to Spring Security."));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -44,7 +43,7 @@ class GreetingControllerTest {
       String s = REQUEST_MAPPING + "/{name}";
       mockMvc.perform(MockMvcRequestBuilders.get(s, "Alice"))
           .andExpect(MockMvcResultMatchers.status().isOk())
-          .andExpect(MockMvcResultMatchers.content().string("Hello Alice! Welcome to my tutorials."));
+          .andExpect(MockMvcResultMatchers.content().string("Hello Alice, Welcome to Spring Security."));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

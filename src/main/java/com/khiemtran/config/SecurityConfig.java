@@ -7,8 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -45,7 +46,8 @@ public class SecurityConfig {
                 response.sendError(response.SC_UNAUTHORIZED, authException.getMessage())))
         .sessionManagement(sessionManagementConfigurer ->
             sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).build();
+        .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+        .build();
   }
 
   private RequestMatcher[] getRequestMatchers() {
@@ -67,9 +69,10 @@ public class SecurityConfig {
 
   @Bean
   AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
-    AuthenticationManagerBuilder authenticationManagerBuilder =
-        httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-    return authenticationManagerBuilder.build();
+    DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+    authenticationProvider.setUserDetailsService(userDetailsServiceImp);
+    authenticationProvider.setPasswordEncoder(passwordEncoder());
+    return new ProviderManager(authenticationProvider);
   }
 }
 

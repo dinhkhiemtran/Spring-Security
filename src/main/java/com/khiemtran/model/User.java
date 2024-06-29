@@ -25,12 +25,10 @@ public class User extends DateAudit {
   @Column(name = "password")
   private String password;
   @NotBlank
-  @Size(max = 40)
   @Email
   @Column(name = "email", unique = true)
   private String email;
   @NotBlank
-  @Size(max = 4)
   @Column(name = "zip_code")
   private String zipCode;
   @Column(name = "city")
