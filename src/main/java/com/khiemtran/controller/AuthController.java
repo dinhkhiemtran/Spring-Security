@@ -43,7 +43,7 @@ public class AuthController {
     SignUpRequest sanitized = request.sanitize(request);
     UserResponse userResponse = userService.create(sanitized);
     URI location = ServletUriComponentsBuilder
-        .fromCurrentContextPath().path("/api/users/{username}")
+        .fromCurrentContextPath().path(URI_LOCATION)
         .buildAndExpand(userResponse.username()).toUri();
     return ResponseEntity.created(location).body("User is created successfully");
   }
