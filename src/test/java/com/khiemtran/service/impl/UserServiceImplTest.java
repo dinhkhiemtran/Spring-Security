@@ -1,5 +1,6 @@
 package com.khiemtran.service.impl;
 
+import com.khiemtran.dto.request.LoginRequest;
 import com.khiemtran.dto.request.SignUpRequest;
 import com.khiemtran.dto.request.UserRequest;
 import com.khiemtran.dto.response.AccessToken;
@@ -165,11 +166,12 @@ class UserServiceImplTest {
 
   @Test
   public void getAccessToken() {
+    LoginRequest loginRequest = new LoginRequest("email@mail.com", "password");
     AccessToken expect = new AccessToken("accessToken", 500L);
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(signUpRequest.email(), signUpRequest.password());
     Mockito.when(authenticationManager.authenticate(ArgumentMatchers.any())).thenReturn(usernamePasswordAuthenticationToken);
     Mockito.when(jwtProvider.generateToken(ArgumentMatchers.any())).thenReturn(expect);
-    AccessToken actual = userService.getAccessToken(signUpRequest.email(), signUpRequest.password());
+    AccessToken actual = userService.getAccessToken(loginRequest);
     Assertions.assertEquals(expect.accessToken(), actual.accessToken());
     Assertions.assertEquals(expect.expiryDate(), actual.expiryDate());
   }

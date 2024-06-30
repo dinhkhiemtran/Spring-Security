@@ -52,7 +52,7 @@ class AuthControllerTest {
               .contentType(MediaType.APPLICATION_JSON)
               .content(new ObjectMapper().writeValueAsString(signUpRequest)))
           .andExpect(MockMvcResultMatchers.status().isCreated())
-          .andExpect(MockMvcResultMatchers.header().stringValues("Location", "http://localhost:8080/api/v1/username"))
+          .andExpect(MockMvcResultMatchers.header().stringValues("Location", "http://localhost/api/users/username"))
           .andExpect(MockMvcResultMatchers.content().string("User is created successfully"));
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -62,8 +62,7 @@ class AuthControllerTest {
   @Test
   public void login() {
     AccessToken accessToken = new AccessToken("accessToken", 500L);
-    Mockito.when(userService.getAccessToken(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-        .thenReturn(accessToken);
+    Mockito.when(userService.getAccessToken(ArgumentMatchers.any())).thenReturn(accessToken);
     try {
       mockMvc.perform(MockMvcRequestBuilders.post(BASE_PATH + "/login")
               .param("email", "email@mail.com")

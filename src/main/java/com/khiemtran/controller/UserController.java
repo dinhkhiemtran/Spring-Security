@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,9 @@ public class UserController {
 
   @GetMapping(path = "/user")
   @Operation(
-      summary = "Login in",
-      description = "Authentication",
+      summary = "Get Users",
+      description = "Retrieve list of users",
+      security = @SecurityRequirement(name = "bearer-key"),
       responses = {
           @ApiResponse(responseCode = "200",
               description = "Get Users",
@@ -47,21 +49,13 @@ public class UserController {
 
   @PutMapping(path = "/user")
   @Operation(
-      summary = "Login in",
-      description = "Authentication",
+      summary = "Update User",
+      description = "Update user information",
+      security = @SecurityRequirement(name = "bearer-key"),
       responses = {
           @ApiResponse(responseCode = "200",
               description = "Access token & Expire time",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(description = "Update User",
-                      example = """
-                              {
-                              "username": "example",
-                              "password": "example",
-                              "email" : "example@mail.com",
-                              "zipCode": "1234",
-                              "city": "example"
-                          }"""))),
+              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
           @ApiResponse(responseCode = "400",
               description = "Invalid input",
               content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
@@ -78,13 +72,13 @@ public class UserController {
 
   @DeleteMapping(path = "/user/{email}")
   @Operation(
-      summary = "Login in",
-      description = "Authentication",
+      summary = "Delete User",
+      description = "Delete user information",
+      security = @SecurityRequirement(name = "bearer-key"),
       responses = {
           @ApiResponse(responseCode = "200",
               description = "Remove User",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(type = "string"))),
+              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
           @ApiResponse(responseCode = "400",
               description = "Invalid input",
               content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),

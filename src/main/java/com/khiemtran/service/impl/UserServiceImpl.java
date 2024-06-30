@@ -1,5 +1,6 @@
 package com.khiemtran.service.impl;
 
+import com.khiemtran.dto.request.LoginRequest;
 import com.khiemtran.dto.request.SignUpRequest;
 import com.khiemtran.dto.request.UserRequest;
 import com.khiemtran.dto.response.AccessToken;
@@ -92,9 +93,9 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public AccessToken getAccessToken(String email, String password) {
+  public AccessToken getAccessToken(LoginRequest loginRequest) {
     Authentication authentication = authenticationManager
-        .authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
     SecurityContext context = SecurityContextHolder.createEmptyContext();
     context.setAuthentication(authentication);
     SecurityContextHolder.setContext(context);
