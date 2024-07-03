@@ -74,7 +74,7 @@ public class AuthController {
                   mediaType = MediaType.APPLICATION_JSON_VALUE,
                   schema = @Schema(type = "string")))
       })
-  public ResponseEntity<AccessToken> login(@RequestParam String email, @RequestParam String password) {
+  public ResponseEntity<AccessToken> login(@RequestParam String email, @Schema(type = "string", format = "password") @RequestParam String password) {
     LoginRequest loginRequest = new LoginRequest(email, password);
     LoginRequest sanitized = loginRequest.sanitize(loginRequest);
     AccessToken accessToken = userService.getAccessToken(sanitized);

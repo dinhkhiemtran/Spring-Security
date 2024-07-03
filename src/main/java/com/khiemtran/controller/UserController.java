@@ -29,7 +29,6 @@ public class UserController {
   @Operation(
       summary = "Get Users",
       description = "Retrieve list of users",
-      security = @SecurityRequirement(name = "bearer-key"),
       responses = {
           @ApiResponse(responseCode = "200",
               description = "Get Users",
@@ -42,6 +41,7 @@ public class UserController {
               description = "Unauthorized",
               content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
       })
+  @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> users = userService.getAllUsers();
     return ResponseEntity.ok(users);
@@ -51,7 +51,6 @@ public class UserController {
   @Operation(
       summary = "Update User",
       description = "Update user information",
-      security = @SecurityRequirement(name = "bearer-key"),
       responses = {
           @ApiResponse(responseCode = "200",
               description = "Access token & Expire time",
@@ -63,6 +62,7 @@ public class UserController {
               description = "Unauthorized",
               content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
       })
+  @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<String> updateUser(@RequestParam("email") String email,
                                            @RequestBody @Valid UserRequest userRequest) {
     UserRequest userRequestSanitized = userRequest.sanitize(userRequest);
@@ -74,7 +74,6 @@ public class UserController {
   @Operation(
       summary = "Delete User",
       description = "Delete user information",
-      security = @SecurityRequirement(name = "bearer-key"),
       responses = {
           @ApiResponse(responseCode = "200",
               description = "Remove User",
@@ -86,6 +85,7 @@ public class UserController {
               description = "Unauthorized",
               content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
       })
+  @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
     userService.remove(SanitizerUtils.sanitizeString(email));
     return ResponseEntity.ok("User is removed successfully.");
