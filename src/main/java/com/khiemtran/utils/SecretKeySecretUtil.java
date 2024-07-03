@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 @RequiredArgsConstructor
 @Component
@@ -23,5 +25,16 @@ public class SecretKeySecretUtil {
       return Keys.hmacShaKeyFor(keyBytes);
     }
     throw new JwKeyNotRegisteredException("JWK has not been registered");
+  }
+
+  public static String randomJwtSecret() {
+    SecureRandom random = new SecureRandom();
+    byte[] key = new byte[128];
+    random.nextBytes(key);
+    return Base64.getEncoder().encodeToString(key);
+  }
+
+  public static void main(String[] args) {
+    System.out.println(randomJwtSecret());
   }
 }
