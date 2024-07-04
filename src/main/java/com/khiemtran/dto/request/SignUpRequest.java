@@ -10,7 +10,7 @@ public record SignUpRequest(
     @NotBlank(message = "username is required") String username,
     @NotBlank(message = "password is required") String password,
     @NotBlank(message = "email is required") @Email String email,
-    @NotBlank(message = "zipCode is required") @Size(max = 5, min = 5, message = "size must be 5") String zipCode,
+    @NotBlank(message = "zipCode is required") @Size(min = 5, max = 5, message = "size must be 5") String zipCode,
     String city) implements Sanitizer<SignUpRequest> {
   @Override
   public SignUpRequest sanitize(SignUpRequest signUpRequest) {
