@@ -1,8 +1,16 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "${CLIENT_ID}"
+            client-secret: "${CLIENT-SECRET}"
   datasource:
     url: "jdbc:mysql://localhost:3306/spring_security_oauth2?useSSL=false&serverTimezone=GMT&useLegacyDatetimeCode=false"
     username: "root"
     password: "${MY_PASSWORD}"
+
 
   jpa:
     show-sql: true
