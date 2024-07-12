@@ -10,4 +10,10 @@ import org.springframework.stereotype.Component;
 public class YamlConfig {
   private String clientId;
   private String clientSecret;
+  private String[] scope;
+  private String tokenUri;
+  private String userInfoUri;
+  private String redirectUri;
+  private String clientName;
 }
+
