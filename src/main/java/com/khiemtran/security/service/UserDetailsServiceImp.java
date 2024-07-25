@@ -1,5 +1,6 @@
 package com.khiemtran.security.service;
 
+import com.khiemtran.exception.EmailNotFoundException;
 import com.khiemtran.model.User;
 import com.khiemtran.repository.UserRepository;
 import com.khiemtran.security.model.UserPrincipal;
@@ -17,9 +18,9 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
   @Override
   @Transactional
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+  public UserDetails loadUserByUsername(String email) {
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found username: " + email));
+        .orElseThrow(() -> new EmailNotFoundException("User not found username: " + email));
     return new UserPrincipal(user);
   }
 }

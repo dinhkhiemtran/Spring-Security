@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ public class GreetingController {
       @ApiResponse(responseCode = "200", description = "Greeting",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
   public ResponseEntity<String> greeting() {
-    return ResponseEntity.ok("Hello you, " + WELCOME);
+    return new ResponseEntity<>("Hello you, " + WELCOME, HttpStatus.OK);
   }
 
   @GetMapping(value = "/{name}")
@@ -31,7 +32,7 @@ public class GreetingController {
       @ApiResponse(responseCode = "200", description = "Greeting",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
   public ResponseEntity<String> getGreeting(@PathVariable("name") String name) {
-    return ResponseEntity.ok("Hello " +
-        name.substring(0, 1).toUpperCase() + name.substring(1) + ", " + WELCOME);
+    return new ResponseEntity<>("Hello " +
+        name.substring(0, 1).toUpperCase() + name.substring(1) + ", " + WELCOME, HttpStatus.OK);
   }
 }

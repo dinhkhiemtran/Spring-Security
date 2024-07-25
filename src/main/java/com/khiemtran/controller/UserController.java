@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class UserController {
   @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> users = userService.getAllUsers();
-    return ResponseEntity.ok(users);
+    return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
   @PutMapping(value = "/user")
@@ -52,7 +53,7 @@ public class UserController {
                                            @RequestBody @Valid UserRequest userRequest) {
     UserRequest userRequestSanitized = userRequest.sanitize(userRequest);
     userService.updateUser(SanitizerUtils.sanitizeString(email), userRequestSanitized);
-    return ResponseEntity.ok("User is updated successfully.");
+    return new ResponseEntity<>("User is updated successfully.", HttpStatus.OK);
   }
 
   @DeleteMapping(value = "/user/{email}")
@@ -66,6 +67,6 @@ public class UserController {
   @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
     userService.remove(SanitizerUtils.sanitizeString(email));
-    return ResponseEntity.ok("User is removed successfully.");
+    return new ResponseEntity<>("User is removed successfully.", HttpStatus.OK);
   }
 }

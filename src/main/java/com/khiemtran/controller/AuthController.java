@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,6 @@ public class AuthController {
     LoginRequest loginRequest = new LoginRequest(email, password);
     LoginRequest sanitized = loginRequest.sanitize(loginRequest);
     AccessToken accessToken = userService.getAccessToken(sanitized);
-    return ResponseEntity.ok(accessToken);
+    return new ResponseEntity<>(accessToken, HttpStatus.OK);
   }
 }
