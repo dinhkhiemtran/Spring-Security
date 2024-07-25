@@ -8,5 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class YamlConfig {
-  private String[] pathAllowed;
+  private String name;
+  private String[] whiteList;
+  private Jwt jwt;
+
+  @Data
+  public static class Jwt {
+    private String jwtSecret;
+    private long expireTime;
+  }
 }

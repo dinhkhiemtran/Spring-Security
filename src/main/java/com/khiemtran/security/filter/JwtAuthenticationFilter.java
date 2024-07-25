@@ -22,22 +22,23 @@ import java.io.IOException;
 @Setter
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+  private final String AUTHORIZATION = "Authorization";
   private final UserDetailsServiceImp userDetailsServiceImp;
   private final SecretKeySecretUtil secretKeySecretUtil;
 
   @SuppressWarnings("NullableProblems")
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    String bearerToken = request.getHeader("Authorization");
+    String bearerToken = request.getHeader(AUTHORIZATION);
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
       String jwt = bearerToken.substring(7);
       Jws<Claims> claimsJws = getClaims(jwt);
       if (claimsJws != null) {
         Claims body = claimsJws.getBody();
         UserDetails userDetails = userDetailsServiceImp.loadUserByUsername(body.getSubject());
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
         UsernamePasswordAuthenticationToken authentication =
             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
       }

@@ -1,6 +1,6 @@
 package com.khiemtran.security.provider;
 
-import com.khiemtran.config.JwtConfig;
+import com.khiemtran.config.YamlConfig;
 import com.khiemtran.dto.response.AccessToken;
 import com.khiemtran.model.Role;
 import com.khiemtran.security.model.UserPrincipal;
@@ -23,11 +23,11 @@ import java.util.Set;
 public class JwtProvider {
   private static final String AUD = "dinhkhiem";
   private final SecretKeySecretUtil secretKeySecretUtil;
-  private final JwtConfig jwtConfig;
+  private final YamlConfig yamlConfig;
 
   public AccessToken generateToken(Authentication authentication) {
-    Date now = new Date();
-    long expireTime = now.getTime() + jwtConfig.getExpireTime() * 1000;
+    Date currentTime = new Date();
+    long expireTime = currentTime.getTime() + yamlConfig.getJwt().getExpireTime() * 1000;
     UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
     Map<String, CustomClaims> maps = new HashMap<>();
     CustomClaims claims = new CustomClaims(principal.getId(),

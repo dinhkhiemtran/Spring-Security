@@ -25,43 +25,28 @@ import java.util.List;
 public class UserController {
   private final UserService userService;
 
-  @GetMapping(path = "/user")
-  @Operation(
-      summary = "Get Users",
-      description = "Retrieve list of users",
-      responses = {
-          @ApiResponse(responseCode = "200",
-              description = "Get Users",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(description = "List Users"))),
-          @ApiResponse(responseCode = "400",
-              description = "Invalid input",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
-          @ApiResponse(responseCode = "401",
-              description = "Unauthorized",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
-      })
+  @GetMapping(value = "/user")
+  @Operation(summary = "Get Users", description = "Retrieve list of users", responses = {
+      @ApiResponse(responseCode = "200", description = "Get Users",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(description = "List Users"))),
+      @ApiResponse(responseCode = "400", description = "Invalid input",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
   @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> users = userService.getAllUsers();
     return ResponseEntity.ok(users);
   }
 
-  @PutMapping(path = "/user")
-  @Operation(
-      summary = "Update User",
-      description = "Update user information",
-      responses = {
-          @ApiResponse(responseCode = "200",
-              description = "Access token & Expire time",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
-          @ApiResponse(responseCode = "400",
-              description = "Invalid input",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
-          @ApiResponse(responseCode = "401",
-              description = "Unauthorized",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
-      })
+  @PutMapping(value = "/user")
+  @Operation(summary = "Update User", description = "Update user information", responses = {
+      @ApiResponse(responseCode = "200", description = "Access token & Expire time",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
+      @ApiResponse(responseCode = "400", description = "Invalid input",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
   @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<String> updateUser(@RequestParam("email") String email,
                                            @RequestBody @Valid UserRequest userRequest) {
@@ -70,21 +55,14 @@ public class UserController {
     return ResponseEntity.ok("User is updated successfully.");
   }
 
-  @DeleteMapping(path = "/user/{email}")
-  @Operation(
-      summary = "Delete User",
-      description = "Delete user information",
-      responses = {
-          @ApiResponse(responseCode = "200",
-              description = "Remove User",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
-          @ApiResponse(responseCode = "400",
-              description = "Invalid input",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
-          @ApiResponse(responseCode = "401",
-              description = "Unauthorized",
-              content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
-      })
+  @DeleteMapping(value = "/user/{email}")
+  @Operation(summary = "Delete User", description = "Delete user information", responses = {
+      @ApiResponse(responseCode = "200", description = "Remove User",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
+      @ApiResponse(responseCode = "400", description = "Invalid input",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
   @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
     userService.remove(SanitizerUtils.sanitizeString(email));

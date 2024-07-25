@@ -16,9 +16,9 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalException {
   @ExceptionHandler(IllegalArgumentException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ModelException illegalArgumentExceptionHandler(IllegalArgumentException exception) {
-    return new ModelException(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    return new ModelException(exception.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(EmailNotFoundException.class)

@@ -1,13 +1,9 @@
 spring:
   application:
     name: "spring-security"
-    path-allowed:
+    white-list:
       - /greeting/**
-      - /api/v1/sign-up
-      - /api/v1/login
-      - /h2-console/**
-      - /swagger-ui/**
-      - /v3/api-docs/**
+      - /auth/**
 
     jwt:
       jwt-secret: "1LpA33BCD+ChEC+mrOcu7g+nrAJmyT2qnoxmXuzbK1d9gN2q55ql5bOYTIPJTmJqnplNWFNyIsaQoWUVWDkAugXhCGYqgAhLy/kJ5O64ocWYVCs+OQinaynVGeE0Jh3WXfOqB8TEi42GZSwRbbLy8ea8QUegRJok+KXK9gD8GaA="

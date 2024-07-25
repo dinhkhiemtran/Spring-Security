@@ -1,6 +1,6 @@
 package com.khiemtran.utils;
 
-import com.khiemtran.config.JwtConfig;
+import com.khiemtran.config.YamlConfig;
 import com.khiemtran.exception.JwKeyNotRegisteredException;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +16,11 @@ import java.util.Base64;
 @Component
 @ConditionalOnProperty(prefix = "spring.application.jwt", name = "jwt-secret")
 public class SecretKeySecretUtil {
-  private final JwtConfig jwtConfig;
+  private final YamlConfig yamlConfig;
 
   public SecretKey getKey() {
-    String jwtSecret = jwtConfig.getJwtSecret();
+    YamlConfig.Jwt jwt = yamlConfig.getJwt();
+    String jwtSecret = jwt.getJwtSecret();
     if (!jwtSecret.isEmpty()) {
       byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
       return Keys.hmacShaKeyFor(keyBytes);

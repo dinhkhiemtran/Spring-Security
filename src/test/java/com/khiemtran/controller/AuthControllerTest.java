@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 class AuthControllerTest {
-  private static final String BASE_PATH = "/api/v1";
+  private static final String BASE_PATH = "/auth";
   @InjectMocks
   private AuthController authController;
   @MockBean
