@@ -1,20 +1,18 @@
 package com.khiemtran.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.khiemtran.controller.UserController;
 import com.khiemtran.dto.request.UserRequest;
 import com.khiemtran.dto.response.UserResponse;
 import com.khiemtran.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -25,7 +23,7 @@ import java.util.List;
 
 @ContextConfiguration(classes = UserController.class)
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class UserControllerTest {
   private static final String BASE_PATH = "/api/v1";
   @InjectMocks

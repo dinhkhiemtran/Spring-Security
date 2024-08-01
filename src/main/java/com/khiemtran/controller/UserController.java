@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ public class UserController {
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
       @ApiResponse(responseCode = "401", description = "Unauthorized",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
-  @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> users = userService.getAllUsers();
     return new ResponseEntity<>(users, HttpStatus.OK);
@@ -48,7 +46,6 @@ public class UserController {
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
       @ApiResponse(responseCode = "401", description = "Unauthorized",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
-  @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<String> updateUser(@RequestParam("email") String email,
                                            @RequestBody @Valid UserRequest userRequest) {
     UserRequest userRequestSanitized = userRequest.sanitize(userRequest);
@@ -64,7 +61,6 @@ public class UserController {
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
       @ApiResponse(responseCode = "401", description = "Unauthorized",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
-  @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<String> deleteUser(@PathVariable("email") String email) {
     userService.remove(SanitizerUtils.sanitizeString(email));
     return new ResponseEntity<>("User is removed successfully.", HttpStatus.OK);

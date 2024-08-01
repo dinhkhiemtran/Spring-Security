@@ -16,17 +16,16 @@ import com.khiemtran.security.provider.JwtProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.Set;
 
 @ContextConfiguration(classes = UserServiceImpl.class)
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class UserServiceImplTest {
   @InjectMocks
   private UserServiceImpl userService;
@@ -123,11 +122,13 @@ class UserServiceImplTest {
     Mockito.when(userRepository.findAll()).thenReturn(List.of(user, user1));
     List<UserResponse> actual = userService.getAllUsers();
     Assertions.assertEquals(2, actual.size());
-    Assertions.assertEquals(userResponse, actual.getFirst());
-    Assertions.assertEquals(userResponse.username(), actual.getFirst().username());
-    Assertions.assertEquals(userResponse.zipCode(), actual.getFirst().zipCode());
-    Assertions.assertEquals(userResponse.email(), actual.getFirst().email());
-    Assertions.assertEquals(userResponse.city(), actual.getFirst().city());
+    UserResponse expectedUserResponse = new UserResponse(user.getUsername(), user.getEmail(), user.getZipCode(), user.getCity());
+    UserResponse firstResponse = actual.get(0);
+    Assertions.assertEquals(expectedUserResponse, firstResponse);
+    Assertions.assertEquals(userResponse.username(), firstResponse.username());
+    Assertions.assertEquals(userResponse.zipCode(), firstResponse.zipCode());
+    Assertions.assertEquals(userResponse.email(), firstResponse.email());
+    Assertions.assertEquals(userResponse.city(), firstResponse.city());
   }
 
   @Test

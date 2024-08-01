@@ -45,10 +45,7 @@ public class AuthController {
     return ResponseEntity.created(location).body("User is created successfully");
   }
 
-  @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
-      mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE
-  ))
+  @PostMapping(value = "/login")
   @Operation(summary = "Login in", description = "Authentication", responses = {
       @ApiResponse(responseCode = "200", description = "Access token & Expire time",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -59,7 +56,8 @@ public class AuthController {
       @ApiResponse(responseCode = "401", description = "Unauthorized",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
   })
-  public ResponseEntity<AccessToken> login(@RequestParam String email, @Schema(type = "string", format = "password") @RequestParam String password) {
+  public ResponseEntity<AccessToken> login(@RequestHeader String email,
+                                           @RequestHeader String password) {
     LoginRequest loginRequest = new LoginRequest(email, password);
     LoginRequest sanitized = loginRequest.sanitize(loginRequest);
     AccessToken accessToken = userService.getAccessToken(sanitized);

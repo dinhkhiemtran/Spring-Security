@@ -7,15 +7,14 @@ import com.khiemtran.dto.response.UserResponse;
 import com.khiemtran.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -24,7 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ContextConfiguration(classes = AuthController.class)
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class AuthControllerTest {
   private static final String BASE_PATH = "/auth";
   @InjectMocks
@@ -65,8 +64,8 @@ class AuthControllerTest {
     Mockito.when(userService.getAccessToken(ArgumentMatchers.any())).thenReturn(accessToken);
     try {
       mockMvc.perform(MockMvcRequestBuilders.post(BASE_PATH + "/login")
-              .param("email", "email@mail.com")
-              .param("password", "12345")
+              .header("email", "email@mail.com")
+              .header("password", "12345")
               .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
           .andExpect(MockMvcResultMatchers.status().isOk())
           .andExpect(MockMvcResultMatchers.content().json(new ObjectMapper().writeValueAsString(accessToken)));

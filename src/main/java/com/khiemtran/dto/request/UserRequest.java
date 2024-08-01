@@ -5,12 +5,14 @@ import com.khiemtran.utils.SanitizerUtils;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
+
 public record UserRequest(
     @NotBlank(message = "Username is required") String username,
     @NotBlank String password,
     @NotBlank(message = "Email is required") @Email String email,
     @NotBlank String zipCode,
-    String city) implements Sanitizer<UserRequest> {
+    String city) implements Sanitizer<UserRequest>, Serializable {
   @Override
   public UserRequest sanitize(UserRequest request) {
     return new UserRequest(

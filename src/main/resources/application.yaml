@@ -27,6 +27,16 @@ spring:
     init:
       mode: "always"
 
+open:
+  api:
+    title: "API-spring-security-service Document"
+    version: "v1.0.0"
+    description: "Api security service"
+    license:
+      name: "API License"
+      identifier: "MIT"
+      url: "https://localhost:8080/api-docs"
+
 logging:
   level:
     org:
