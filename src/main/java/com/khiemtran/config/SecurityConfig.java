@@ -31,24 +31,20 @@ import java.util.Optional;
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
+  private final String[] WHITE_LIST = new String[]{"/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**"};
   private final UserDetailsServiceImp userDetailsServiceImp;
   private final YamlConfig yamlConfig;
   private final SecretKeySecretUtil secretKeySecretUtil;
 
-  @Bean
-  public WebMvcConfigurer webMvcConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("**")
-            .allowedOrigins("http://localhost:4200")
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
-            .allowedHeaders("*")
-            .allowCredentials(false)
-            .maxAge(3600);
-      }
-    };
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("**")
+        .allowedOrigins("http://localhost:4200")
+        .allowedMethods("GET", "POST", "PUT", "DELETE")
+        .allowedHeaders("*")
+        .allowCredentials(false)
+        .maxAge(3600);
   }
 
   @Bean
@@ -80,9 +76,12 @@ public class SecurityConfig {
 
   @Bean
   public WebSecurityCustomizer webSecurityCustomizer() {
+    RequestMatcher[] whiteList = Arrays.stream(WHITE_LIST)
+        .map(AntPathRequestMatcher::antMatcher)
+        .toArray(RequestMatcher[]::new);
     return webSecurityCustomizer ->
         webSecurityCustomizer.ignoring()
-            .requestMatchers("/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**");
+            .requestMatchers(whiteList);
   }
 
   @Bean
