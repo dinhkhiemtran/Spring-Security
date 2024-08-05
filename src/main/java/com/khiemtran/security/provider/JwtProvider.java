@@ -41,7 +41,7 @@ public class JwtProvider {
         .setSubject(principal.getEmail())
         .signWith(secretKeySecretUtil.getKey(), SignatureAlgorithm.HS256)
         .compact();
-    return new AccessToken(accessToken, expireTime);
+    return new AccessToken(accessToken, "refreshToken", expireTime);
   }
 }
 

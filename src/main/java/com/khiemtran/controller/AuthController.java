@@ -4,7 +4,7 @@ import com.khiemtran.dto.request.LoginRequest;
 import com.khiemtran.dto.request.SignUpRequest;
 import com.khiemtran.dto.response.AccessToken;
 import com.khiemtran.dto.response.UserResponse;
-import com.khiemtran.service.UserService;
+import com.khiemtran.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +26,7 @@ import java.net.URI;
 @Tag(name = "SignUp & Login")
 public class AuthController {
   private final static String URI_LOCATION = "/api/users/{username}";
-  private final UserService userService;
+  private final AuthenticationService authenticationService;
 
   @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
   @Operation(summary = "Sign Up", description = "Create new user", responses = {
@@ -38,7 +38,7 @@ public class AuthController {
   })
   public ResponseEntity<String> signup(@Valid @RequestBody SignUpRequest request) {
     SignUpRequest sanitized = request.sanitize(request);
-    UserResponse userResponse = userService.create(sanitized);
+    UserResponse userResponse = authenticationService.register(sanitized);
     URI location = ServletUriComponentsBuilder
         .fromCurrentContextPath().path(URI_LOCATION)
         .buildAndExpand(userResponse.username()).toUri();
@@ -60,7 +60,6 @@ public class AuthController {
                                            @RequestHeader String password) {
     LoginRequest loginRequest = new LoginRequest(email, password);
     LoginRequest sanitized = loginRequest.sanitize(loginRequest);
-    AccessToken accessToken = userService.getAccessToken(sanitized);
-    return new ResponseEntity<>(accessToken, HttpStatus.OK);
+    return new ResponseEntity<>(authenticationService.authenticate(sanitized), HttpStatus.OK);
   }
 }

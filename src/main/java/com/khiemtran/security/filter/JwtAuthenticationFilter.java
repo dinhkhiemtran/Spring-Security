@@ -1,6 +1,6 @@
 package com.khiemtran.security.filter;
 
-import com.khiemtran.security.service.UserDetailsServiceImp;
+import com.khiemtran.service.impl.UserDetailsServiceImp;
 import com.khiemtran.utils.SecretKeySecretUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;

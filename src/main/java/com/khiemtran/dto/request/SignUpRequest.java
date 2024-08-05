@@ -13,7 +13,7 @@ public record SignUpRequest(
     @NotBlank(message = "password is required") String password,
     @NotBlank(message = "email is required") @Email String email,
     @NotBlank(message = "zipCode is required") @Size(min = 5, max = 5, message = "size must be 5") String zipCode,
-    String city) implements Sanitizer<SignUpRequest>, Serializable {
+    @NotBlank(message = "city is required") String city) implements Sanitizer<SignUpRequest>, Serializable {
   @Override
   public SignUpRequest sanitize(SignUpRequest signUpRequest) {
     return new SignUpRequest(

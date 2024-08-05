@@ -1,7 +1,7 @@
 package com.khiemtran.config;
 
 import com.khiemtran.security.filter.JwtAuthenticationFilter;
-import com.khiemtran.security.service.UserDetailsServiceImp;
+import com.khiemtran.service.impl.UserDetailsServiceImp;
 import com.khiemtran.utils.SecretKeySecretUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
