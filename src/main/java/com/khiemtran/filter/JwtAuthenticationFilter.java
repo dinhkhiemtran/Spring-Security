@@ -1,20 +1,18 @@
-package com.khiemtran.security.filter;
+package com.khiemtran.filter;
 
+import com.khiemtran.service.JwtService;
 import com.khiemtran.service.impl.UserDetailsServiceImp;
-import com.khiemtran.utils.SecretKeySecretUtil;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -22,20 +20,18 @@ import java.io.IOException;
 @Setter
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-  private final String AUTHORIZATION = "Authorization";
+  private final JwtService jwtService;
   private final UserDetailsServiceImp userDetailsServiceImp;
-  private final SecretKeySecretUtil secretKeySecretUtil;
 
   @SuppressWarnings("NullableProblems")
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    String bearerToken = request.getHeader(AUTHORIZATION);
-    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-      String jwt = bearerToken.substring(7);
-      Jws<Claims> claimsJws = getClaims(jwt);
-      if (claimsJws != null) {
-        Claims body = claimsJws.getBody();
-        UserDetails userDetails = userDetailsServiceImp.loadUserByUsername(body.getSubject());
+    String bearerToken = request.getHeader("Authorization");
+    if (StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer")) {
+      String token = bearerToken.substring(7);
+      String sub = jwtService.extractToken(token);
+      if (sub != null) {
+        UserDetails userDetails = userDetailsServiceImp.loadUserByUsername(sub);
         UsernamePasswordAuthenticationToken authentication =
             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -44,25 +40,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
     }
     filterChain.doFilter(request, response);
-  }
-
-  public Jws<Claims> getClaims(String jwt) {
-    try {
-      return Jwts.parserBuilder()
-          .setSigningKey(secretKeySecretUtil.getKey())
-          .build()
-          .parseClaimsJws(jwt);
-    } catch (SignatureException ex) {
-      logger.error("Invalid JWT signature");
-    } catch (MalformedJwtException ex) {
-      logger.error("Invalid JWT token");
-    } catch (ExpiredJwtException ex) {
-      logger.error("Expired JWT token");
-    } catch (UnsupportedJwtException ex) {
-      logger.error("Unsupported JWT token");
-    } catch (IllegalArgumentException ex) {
-      logger.error("JWT claims string is empty.");
-    }
-    return null;
   }
 }

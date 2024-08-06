@@ -1,8 +1,8 @@
 package com.khiemtran.config;
 
-import com.khiemtran.security.filter.JwtAuthenticationFilter;
+import com.khiemtran.filter.JwtAuthenticationFilter;
+import com.khiemtran.service.JwtService;
 import com.khiemtran.service.impl.UserDetailsServiceImp;
-import com.khiemtran.utils.SecretKeySecretUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +35,7 @@ public class SecurityConfig implements WebMvcConfigurer {
   private final String[] WHITE_LIST = new String[]{"/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**"};
   private final UserDetailsServiceImp userDetailsServiceImp;
   private final YamlConfig yamlConfig;
-  private final SecretKeySecretUtil secretKeySecretUtil;
+  private final JwtService jwtService;
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
@@ -97,7 +97,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() {
-    return new JwtAuthenticationFilter(userDetailsServiceImp, secretKeySecretUtil);
+    return new JwtAuthenticationFilter(jwtService, userDetailsServiceImp);
   }
 
   @Bean

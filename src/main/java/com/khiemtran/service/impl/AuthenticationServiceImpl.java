@@ -10,8 +10,8 @@ import com.khiemtran.model.Role;
 import com.khiemtran.model.User;
 import com.khiemtran.repository.RoleRepository;
 import com.khiemtran.repository.UserRepository;
-import com.khiemtran.security.provider.JwtProvider;
 import com.khiemtran.service.AuthenticationService;
+import com.khiemtran.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final RoleRepository roleRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
-  private final JwtProvider jwtProvider;
+  private final JwtService jwtService;
 
   @Override
   public UserResponse register(SignUpRequest request) {
@@ -60,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     context.setAuthentication(authentication);
     SecurityContextHolder.setContext(context);
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    return jwtProvider.generateToken(authentication);
+    return jwtService.generateToken(authentication);
   }
 
   private Role getRoles() {

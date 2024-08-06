@@ -56,8 +56,7 @@ public class AuthController {
       @ApiResponse(responseCode = "401", description = "Unauthorized",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
   })
-  public ResponseEntity<AccessToken> login(@RequestHeader String email,
-                                           @RequestHeader String password) {
+  public ResponseEntity<AccessToken> login(@RequestHeader String email, @RequestHeader String password) {
     LoginRequest loginRequest = new LoginRequest(email, password);
     LoginRequest sanitized = loginRequest.sanitize(loginRequest);
     return new ResponseEntity<>(authenticationService.authenticate(sanitized), HttpStatus.OK);

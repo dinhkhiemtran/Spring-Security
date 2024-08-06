@@ -73,5 +73,11 @@ public class GlobalException {
         .stream().map(e -> new ViolationException(e.getMessage()))
         .toList();
   }
+
+  @ExceptionHandler(RuntimeException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ModelException internalServerError(RuntimeException exception) {
+    return new ModelException(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 }
 

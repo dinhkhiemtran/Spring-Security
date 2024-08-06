@@ -4,12 +4,9 @@ import com.khiemtran.dto.request.UserRequest;
 import com.khiemtran.dto.response.UserResponse;
 import com.khiemtran.exception.EmailNotFoundException;
 import com.khiemtran.model.User;
-import com.khiemtran.repository.RoleRepository;
 import com.khiemtran.repository.UserRepository;
-import com.khiemtran.security.provider.JwtProvider;
 import com.khiemtran.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +19,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final RoleRepository roleRepository;
-  private final JwtProvider jwtProvider;
-  private final AuthenticationManager authenticationManager;
 
   @Override
   public List<UserResponse> getAllUsers() {

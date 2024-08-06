@@ -1,4 +1,4 @@
-package com.khiemtran.security.model;
+package com.khiemtran.utils;
 
 import com.khiemtran.model.Role;
 import com.khiemtran.model.User;
