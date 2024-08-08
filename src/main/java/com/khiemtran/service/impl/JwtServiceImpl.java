@@ -2,9 +2,9 @@ package com.khiemtran.service.impl;
 
 import com.khiemtran.config.YamlConfig;
 import com.khiemtran.dto.response.AccessToken;
-import com.khiemtran.utils.UserPrincipal;
 import com.khiemtran.service.JwtService;
 import com.khiemtran.service.SecretKeyService;
+import com.khiemtran.utils.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -63,7 +63,8 @@ public class JwtServiceImpl implements JwtService {
 
   @Override
   public boolean isValidationToken(String token, UserPrincipal userPrincipal) {
-    return false;
+    String email = extractToken(token);
+    return email.equals(userPrincipal.getEmail());
   }
 
   private String generateToken(Map<String, Object> claims, UserPrincipal userPrincipal, long expireTime) {

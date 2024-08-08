@@ -1,13 +1,18 @@
 package com.khiemtran.exception;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
-public class EmailNotFoundException extends UsernameNotFoundException {
-  public EmailNotFoundException(String msg, Throwable cause) {
-    super(msg, cause);
+@Getter
+public class EmailNotFoundException extends RuntimeException {
+  private HttpStatus httpStatus;
+
+  public EmailNotFoundException(String message, HttpStatus httpStatus) {
+    super(message);
+    this.httpStatus = httpStatus;
   }
 
-  public EmailNotFoundException(String msg) {
-    super(msg);
+  public EmailNotFoundException(String message) {
+    super(message);
   }
 }

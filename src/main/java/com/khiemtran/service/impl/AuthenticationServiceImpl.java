@@ -55,11 +55,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public AccessToken authenticate(LoginRequest loginRequest) {
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
-    userRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new EmailNotFoundException("Email not found"));
     SecurityContext context = SecurityContextHolder.createEmptyContext();
     context.setAuthentication(authentication);
     SecurityContextHolder.setContext(context);
-    SecurityContextHolder.getContext().setAuthentication(authentication);
     return jwtService.generateToken(authentication);
   }
 
