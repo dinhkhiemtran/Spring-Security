@@ -7,7 +7,9 @@ spring:
 
     jwt:
       jwt-secret: "1LpA33BCD+ChEC+mrOcu7g+nrAJmyT2qnoxmXuzbK1d9gN2q55ql5bOYTIPJTmJqnplNWFNyIsaQoWUVWDkAugXhCGYqgAhLy/kJ5O64ocWYVCs+OQinaynVGeE0Jh3WXfOqB8TEi42GZSwRbbLy8ea8QUegRJok+KXK9gD8GaA="
-      expire-time: "300"
+      refresh-jwt-secret: "deu4iFD/1UgAe2NZLy3XbYIKxs+VMTxJgXx8stzNd2iwtwOcoZkfN4dRh80zl00iUjmzMk8/twO6fVLYRPNQPc4CfUTWn1jA5Amqo/95kI5HMu5kg1A3RKJvgxPmrM+WPdYVSla5xzsC9ByufGZio2NPvrkHDh1M8OiV6SbLJi8="
+      expire-time: "5" #minutes
+      expire-day: "5" #days
 
   h2:
     console:

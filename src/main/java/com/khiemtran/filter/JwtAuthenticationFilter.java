@@ -1,5 +1,6 @@
 package com.khiemtran.filter;
 
+import com.khiemtran.constants.TokenType;
 import com.khiemtran.service.JwtService;
 import com.khiemtran.service.impl.UserDetailsServiceImp;
 import com.khiemtran.utils.UserPrincipal;
@@ -33,10 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String bearerToken = request.getHeader("Authorization");
     if (StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer")) {
       String token = bearerToken.substring(7);
-      String email = jwtService.extractToken(token);
+      String email = jwtService.extractToken(token, TokenType.ACCESS_TOKEN);
       if (StringUtils.isNotBlank(email) && SecurityContextHolder.getContext().getAuthentication() == null) {
         UserPrincipal userPrincipal = (UserPrincipal) userDetailsServiceImp.loadUserByUsername(email);
-        if (jwtService.isValidationToken(token, userPrincipal)) {
+        if (jwtService.isValidationToken(token, TokenType.ACCESS_TOKEN, userPrincipal)) {
           SecurityContext context = SecurityContextHolder.createEmptyContext();
           UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());

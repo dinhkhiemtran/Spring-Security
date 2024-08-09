@@ -1,13 +1,14 @@
 package com.khiemtran.service;
 
-import com.khiemtran.dto.response.AccessToken;
+import com.khiemtran.constants.TokenType;
 import com.khiemtran.utils.UserPrincipal;
-import org.springframework.security.core.Authentication;
 
 public interface JwtService {
-  AccessToken generateToken(Authentication authentication);
+  String generateToken(UserPrincipal userPrincipal, TokenType tokenType, long expireTime);
 
-  String extractToken(String token);
+  String generateRefreshToken(UserPrincipal userPrincipal, TokenType tokenType, long expireDay);
 
-  boolean isValidationToken(String token, UserPrincipal userPrincipal);
+  String extractToken(String token, TokenType type);
+
+  boolean isValidationToken(String token, TokenType tokenType, UserPrincipal userPrincipal);
 }

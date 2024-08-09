@@ -15,6 +15,8 @@ public class YamlConfig {
   @Data
   public static class Jwt {
     private String jwtSecret;
+    private String refreshJwtSecret;
     private long expireTime;
+    private long expireDay;
   }
 }
