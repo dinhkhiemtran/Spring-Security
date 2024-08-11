@@ -29,9 +29,9 @@ spring:
     init:
       mode: "always"
 
-open:
-  api:
-    title: "API-spring-security-service Document"
+openapi:
+  service:
+    title: "API Spring Security Service Document"
     version: "v1.0.0"
     description: "Api security service"
     license:

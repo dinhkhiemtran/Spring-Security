@@ -2,6 +2,7 @@ package com.khiemtran.config;
 
 import com.khiemtran.filter.JwtAuthenticationFilter;
 import com.khiemtran.service.JwtService;
+import com.khiemtran.service.TokenService;
 import com.khiemtran.service.impl.UserDetailsServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,7 @@ public class SecurityConfig implements WebMvcConfigurer {
   private final UserDetailsServiceImp userDetailsServiceImp;
   private final YamlConfig yamlConfig;
   private final JwtService jwtService;
+  private final TokenService tokenService;
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
@@ -97,7 +99,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() {
-    return new JwtAuthenticationFilter(jwtService, userDetailsServiceImp);
+    return new JwtAuthenticationFilter(jwtService, userDetailsServiceImp,tokenService);
   }
 
   @Bean

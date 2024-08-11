@@ -3,23 +3,18 @@ package com.khiemtran.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-public class User extends DateAudit {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private Long id;
+public class User extends AbstractEntity<Long> {
   @Column(name = "user_name")
   private String username;
   @Column(name = "password")

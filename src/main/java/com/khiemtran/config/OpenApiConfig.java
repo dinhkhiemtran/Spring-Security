@@ -20,12 +20,12 @@ import java.util.Map;
 public class OpenApiConfig {
 
   @Bean
-  public OpenAPI customOpenAPI(@Value("${open.api.title}") String title,
-                               @Value("${open.api.license.name}") String name,
-                               @Value("${open.api.license.identifier}") String identifier,
-                               @Value("${open.api.license.url}") String url,
-                               @Value("${open.api.version}") String version,
-                               @Value("${open.api.version}") String description) {
+  public OpenAPI customOpenAPI(@Value("${openapi.service.title}") String title,
+                               @Value("${openapi.service.license.name}") String name,
+                               @Value("${openapi.service.license.identifier}") String identifier,
+                               @Value("${openapi.service.license.url}") String url,
+                               @Value("${openapi.service.version}") String version,
+                               @Value("${openapi.service.description}") String description) {
     License licenseInfo = new License();
     licenseInfo.setName(name);
     licenseInfo.setExtensions(Map.of("SPDX", "MIT",

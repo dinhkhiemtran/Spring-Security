@@ -2,7 +2,6 @@ package com.khiemtran.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,10 +46,10 @@ public class GlobalException {
     return new ModelException(jwKeyNotRegisteredException.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
-  @ExceptionHandler(UsernameNotFoundException.class)
+  @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ModelException usernameNotFoundException(UsernameNotFoundException usernameNotFoundException) {
-    return new ModelException(usernameNotFoundException.getMessage(), HttpStatus.UNAUTHORIZED);
+  public ModelException usernameNotFoundException(ResourceNotFoundException exception) {
+    return new ModelException(exception.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

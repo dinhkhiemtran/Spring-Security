@@ -9,14 +9,17 @@ import com.khiemtran.dto.response.UserResponse;
 import com.khiemtran.exception.EmailNotFoundException;
 import com.khiemtran.exception.RoleNotFoundException;
 import com.khiemtran.model.Role;
+import com.khiemtran.model.Token;
 import com.khiemtran.model.User;
 import com.khiemtran.repository.RoleRepository;
 import com.khiemtran.repository.UserRepository;
 import com.khiemtran.service.AuthenticationService;
 import com.khiemtran.service.JwtService;
+import com.khiemtran.service.TokenService;
 import com.khiemtran.utils.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,10 +34,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.khiemtran.constants.TokenType.ACCESS_TOKEN;
 import static com.khiemtran.model.RoleName.ROLE_ADMIN;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
   private static final String REFRESH_TOKEN = "refresh_token";
   private final UserRepository userRepository;
@@ -43,6 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final AuthenticationManager authenticationManager;
   private final JwtService jwtService;
   private final YamlConfig yamlConfig;
+  private final TokenService tokenService;
 
   @Override
   public UserResponse register(SignUpRequest request) {
@@ -77,12 +83,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     long expireTime = getExpireTime(new Date());
     String accessToken = jwtService.generateToken(
         userPrincipal,
-        TokenType.ACCESS_TOKEN,
+        ACCESS_TOKEN,
         getExpireTime(new Date()));
     String refreshToken = jwtService.generateRefreshToken(
         userPrincipal,
         TokenType.REFRESH_TOKEN,
         getExpireDay(new Date()));
+    tokenService.save(new Token(accessToken, refreshToken, userPrincipal.getEmail()));
     return new AccessTokenResponse(accessToken, refreshToken, expireTime);
   }
 
@@ -98,8 +105,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throw new IllegalArgumentException("Refresh token invalid.");
     }
     long expireTime = getExpireTime(new Date());
-    String accessToken = jwtService.generateToken(userPrincipal, TokenType.ACCESS_TOKEN, expireTime);
+    String accessToken = jwtService.generateToken(userPrincipal, ACCESS_TOKEN, expireTime);
+    tokenService.save(new Token(accessToken, refreshToken, userPrincipal.getEmail()));
+    log.info("Token has been successfully saved.");
     return new AccessTokenResponse(accessToken, refreshToken, expireTime);
+  }
+
+  @Override
+  public void logout(String accessToken) {
+    String email = jwtService.extractToken(accessToken, ACCESS_TOKEN);
+    tokenService.delete(email);
   }
 
   private long getExpireTime(Date current) {

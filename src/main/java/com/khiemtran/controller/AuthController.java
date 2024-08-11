@@ -48,7 +48,7 @@ public class AuthController {
 
   @PostMapping(value = "/login")
   @Operation(summary = "Login in", description = "Authentication", responses = {
-      @ApiResponse(responseCode = "200", description = "Access token & Expire time",
+      @ApiResponse(responseCode = "200", description = "accessToken & refreshToken & expireTime",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
               schema = @Schema(description = "Access token string",
                   example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", type = "object"))),
@@ -64,8 +64,8 @@ public class AuthController {
   }
 
   @PostMapping(value = "/refresh")
-  @Operation(summary = "Login in", description = "Authentication", responses = {
-      @ApiResponse(responseCode = "200", description = "Access token & Expire time",
+  @Operation(summary = "refresh", description = "Refresh token", responses = {
+      @ApiResponse(responseCode = "200", description = "accessToken & refreshToken & expireTime",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
               schema = @Schema(description = "Access token string",
                   example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", type = "object"))),
@@ -74,7 +74,24 @@ public class AuthController {
       @ApiResponse(responseCode = "401", description = "Unauthorized",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
   })
-  public ResponseEntity<AccessTokenResponse> refresh(HttpServletRequest request) {
+  public ResponseEntity<AccessTokenResponse> refresh(@RequestHeader("refresh_token") String refreshToken,
+                                                     HttpServletRequest request) {
     return new ResponseEntity<>(authenticationService.refresh(request), HttpStatus.OK);
+  }
+
+  @PostMapping(value = "/logout")
+  @Operation(summary = "logout", description = "Logout", responses = {
+      @ApiResponse(responseCode = "200", description = "User has successfully signed out.",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+              schema = @Schema(description = "User has successfully signed out.",
+                  example = "User has successfully signed out....", type = "string"))),
+      @ApiResponse(responseCode = "400", description = "Invalid input",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
+  })
+  public ResponseEntity<String> logout(@RequestHeader("access_token") String accessToken) {
+    authenticationService.logout(accessToken);
+    return new ResponseEntity<>("User has successfully signed out.", HttpStatus.OK);
   }
 }

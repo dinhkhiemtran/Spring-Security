@@ -12,4 +12,6 @@ public interface AuthenticationService {
   AccessTokenResponse authenticate(LoginRequest loginRequest);
 
   AccessTokenResponse refresh(HttpServletRequest request);
+
+  void logout(String accessToken);
 }

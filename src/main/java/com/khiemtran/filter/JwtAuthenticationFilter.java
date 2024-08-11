@@ -2,6 +2,7 @@ package com.khiemtran.filter;
 
 import com.khiemtran.constants.TokenType;
 import com.khiemtran.service.JwtService;
+import com.khiemtran.service.TokenService;
 import com.khiemtran.service.impl.UserDetailsServiceImp;
 import com.khiemtran.utils.UserPrincipal;
 import jakarta.servlet.FilterChain;
@@ -26,6 +27,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
   private final UserDetailsServiceImp userDetailsServiceImp;
+  private final TokenService tokenService;
 
   @SuppressWarnings("NullableProblems")
   @Override
@@ -35,6 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if (StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer")) {
       String token = bearerToken.substring(7);
       String email = jwtService.extractToken(token, TokenType.ACCESS_TOKEN);
+      // Proceed with the filter chain if the token is logged out
+      if (tokenService.isTokenLoggedOut(email)) {
+        filterChain.doFilter(request, response);
+        return;
+      }
       if (StringUtils.isNotBlank(email) && SecurityContextHolder.getContext().getAuthentication() == null) {
         UserPrincipal userPrincipal = (UserPrincipal) userDetailsServiceImp.loadUserByUsername(email);
         if (jwtService.isValidationToken(token, TokenType.ACCESS_TOKEN, userPrincipal)) {
