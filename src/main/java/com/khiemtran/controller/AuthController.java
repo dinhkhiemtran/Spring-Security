@@ -11,8 +11,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ import java.net.URI;
 public class AuthController {
   private final static String URI_LOCATION = "/api/users/{username}";
   private final AuthenticationService authenticationService;
+  private final HttpServletResponse httpServletResponse;
 
   @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
   @Operation(summary = "Sign Up", description = "Create new user", responses = {
@@ -43,7 +46,8 @@ public class AuthController {
     URI location = ServletUriComponentsBuilder
         .fromCurrentContextPath().path(URI_LOCATION)
         .buildAndExpand(userResponse.username()).toUri();
-    return ResponseEntity.created(location).body("User is created successfully");
+    httpServletResponse.setHeader(HttpHeaders.LOCATION, location.toString());
+    return new ResponseEntity<>("User is created successfully", HttpStatus.CREATED);
   }
 
   @PostMapping(value = "/login")

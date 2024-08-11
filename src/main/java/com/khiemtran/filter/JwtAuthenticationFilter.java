@@ -29,32 +29,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final UserDetailsServiceImp userDetailsServiceImp;
   private final TokenService tokenService;
 
-  @SuppressWarnings("NullableProblems")
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     log.info("******************Pre-Filter******************");
     String bearerToken = request.getHeader("Authorization");
-    if (StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer")) {
-      String token = bearerToken.substring(7);
+    if (isBearerTokenValid(bearerToken)) {
+      String token = extractToken(bearerToken);
+      log.info("Access token successfully retrieved from bearer token: {}", token);
       String email = jwtService.extractToken(token, TokenType.ACCESS_TOKEN);
-      // Proceed with the filter chain if the token is logged out
-      if (tokenService.isTokenLoggedOut(email)) {
+      log.info("Email successfully extracted from access token: {}", email);
+      if (isTokenLoggedOutOrUnauthenticated(email, request)) {
+        log.info("Token is logged out or user is already authenticated; proceeding without re-authentication.");
         filterChain.doFilter(request, response);
         return;
       }
-      if (StringUtils.isNotBlank(email) && SecurityContextHolder.getContext().getAuthentication() == null) {
-        UserPrincipal userPrincipal = (UserPrincipal) userDetailsServiceImp.loadUserByUsername(email);
-        if (jwtService.isValidationToken(token, TokenType.ACCESS_TOKEN, userPrincipal)) {
-          SecurityContext context = SecurityContextHolder.createEmptyContext();
-          UsernamePasswordAuthenticationToken authentication =
-              new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
-          authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-          context.setAuthentication(authentication);
-          SecurityContextHolder.setContext(context);
-          log.info("Authentication Details: " + authentication.getDetails());
-        }
-      }
+      log.info("Token is valid and user is not authenticated; proceeding with authentication.");
+      authenticateRequest(request, token, email);
     }
     filterChain.doFilter(request, response);
+  }
+
+  private boolean isBearerTokenValid(String bearerToken) {
+    return StringUtils.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer");
+  }
+
+  private String extractToken(String bearerToken) {
+    return bearerToken.substring(7);
+  }
+
+  private boolean isTokenLoggedOutOrUnauthenticated(String email, HttpServletRequest request) {
+    return tokenService.isTokenLoggedOut(email) ||
+        SecurityContextHolder.getContext().getAuthentication() != null;
+  }
+
+  private void authenticateRequest(HttpServletRequest request, String token, String email) {
+    if (StringUtils.isNotBlank(email)) {
+      UserPrincipal userPrincipal = (UserPrincipal) userDetailsServiceImp.loadUserByUsername(email);
+      if (jwtService.isValidationToken(token, TokenType.ACCESS_TOKEN, userPrincipal)) {
+        setAuthenticationContext(request, userPrincipal);
+        log.info("Authentication Details: " + SecurityContextHolder.getContext().getAuthentication().getDetails());
+      }
+    }
+  }
+
+  private void setAuthenticationContext(HttpServletRequest request, UserPrincipal userPrincipal) {
+    SecurityContext context = SecurityContextHolder.createEmptyContext();
+    UsernamePasswordAuthenticationToken authentication =
+        new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
+    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    context.setAuthentication(authentication);
+    SecurityContextHolder.setContext(context);
   }
 }
