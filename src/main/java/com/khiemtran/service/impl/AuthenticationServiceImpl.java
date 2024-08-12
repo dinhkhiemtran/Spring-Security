@@ -128,21 +128,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   public void logout(String accessToken) {
     String email = jwtService.extractToken(accessToken, ACCESS_TOKEN);
-    if (email == null) {
-      log.error("Failed to extract email from access token. Token may be invalid.");
-      throw new IllegalArgumentException("Invalid access token.");
-    }
     log.info("Successfully extracted email {} from access token.", email);
     tokenService.delete(email);
     log.info("User with email {} has been logged out and their token has been invalidated.", email);
   }
 
   private long getExpireTime(Date current) {
-    return current.getTime() + 1000 * 60 * yamlConfig.getJwt().getExpireTime();
+    return current.getTime() + 1000L * 60 * yamlConfig.getJwt().getExpireTime();
   }
 
   private long getExpireDay(Date current) {
-    return current.getTime() + 1000 * 60 * 60 * 24 * yamlConfig.getJwt().getExpireDay();
+    return current.getTime() + 1000L * 60 * 60 * 24 * yamlConfig.getJwt().getExpireDay();
   }
 
   private Role getRoles() {

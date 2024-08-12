@@ -24,7 +24,7 @@ import java.net.URI;
 @RequestMapping("/auth")
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "SignUp & Login")
+@Tag(name = "Registration & Authentication & Refresh & Logout")
 public class AuthController {
   private final static String URI_LOCATION = "/auth/{username}";
   private final AuthenticationService authenticationService;
