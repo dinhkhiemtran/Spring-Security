@@ -44,7 +44,6 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = AuthenticationServiceImpl.class)
 @ActiveProfiles("test")
 @SpringBootTest
-@Slf4j
 class AuthenticationServiceImplTest {
   @InjectMocks
   private AuthenticationServiceImpl authenticationService;

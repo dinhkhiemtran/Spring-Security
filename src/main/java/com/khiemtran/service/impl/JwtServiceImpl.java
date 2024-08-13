@@ -8,6 +8,7 @@ import com.khiemtran.utils.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +23,23 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
   private final SecretKeyService secretKeyService;
   private final YamlConfig yamlConfig;
+  private SecretKey secretKeyAccessToken;
+  private SecretKey secretKeyRefreshToken;
+
+  @PostConstruct
+  public void init() {
+    secretKeyAccessToken = secretKeyService.getKey(yamlConfig, TokenType.ACCESS_TOKEN);
+    secretKeyRefreshToken = secretKeyService.getKey(yamlConfig, TokenType.REFRESH_TOKEN);
+  }
 
   @Override
   public String generateToken(UserPrincipal userPrincipal, TokenType tokenType, long expireTime) {
-    return generateToken(new HashMap<>(), tokenType, userPrincipal, expireTime);
+    return generateToken(new HashMap<>(), userPrincipal, expireTime);
   }
 
   @Override
   public String generateRefreshToken(UserPrincipal userPrincipal, TokenType tokenType, long expireDay) {
-    return generateRefreshToken(new HashMap<>(), tokenType, userPrincipal, expireDay);
+    return generateRefreshToken(new HashMap<>(), userPrincipal, expireDay);
   }
 
   @Override
@@ -68,7 +77,7 @@ public class JwtServiceImpl implements JwtService {
     return extractClaim(token, type, Claims::getExpiration);
   }
 
-  private String generateToken(Map<String, Object> claims, TokenType tokenType, UserPrincipal userPrincipal, long expireTime) {
+  private String generateToken(Map<String, Object> claims, UserPrincipal userPrincipal, long expireTime) {
     claims.put("city", userPrincipal.getCity());
     claims.put("zipCode", userPrincipal.getZipCode());
     return Jwts.builder()
@@ -76,11 +85,11 @@ public class JwtServiceImpl implements JwtService {
         .setSubject(userPrincipal.getEmail())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(expireTime))
-        .signWith(getKey(tokenType), SignatureAlgorithm.HS256)
+        .signWith(secretKeyAccessToken, SignatureAlgorithm.HS256)
         .compact();
   }
 
-  private String generateRefreshToken(Map<String, Object> claims, TokenType tokenType, UserPrincipal userPrincipal, long expireTime) {
+  private String generateRefreshToken(Map<String, Object> claims, UserPrincipal userPrincipal, long expireTime) {
     claims.put("city", userPrincipal.getCity());
     claims.put("zipCode", userPrincipal.getZipCode());
     return Jwts.builder()
@@ -88,7 +97,7 @@ public class JwtServiceImpl implements JwtService {
         .setSubject(userPrincipal.getEmail())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(expireTime))
-        .signWith(getKey(tokenType), SignatureAlgorithm.HS256)
+        .signWith(secretKeyRefreshToken, SignatureAlgorithm.HS256)
         .compact();
   }
 }
