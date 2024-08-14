@@ -54,8 +54,8 @@ class JwtServiceImplTest {
     byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
     secretKeyAccessToken = Keys.hmacShaKeyFor(keyBytes);
     secretKeyRefreshToken = Keys.hmacShaKeyFor(keyBytes);
-    when(secretKeyService.getKey(yamlConfig, TokenType.ACCESS_TOKEN)).thenReturn(secretKeyAccessToken);
-    when(secretKeyService.getKey(yamlConfig, TokenType.REFRESH_TOKEN)).thenReturn(secretKeyRefreshToken);
+    when(secretKeyService.getKey(TokenType.ACCESS_TOKEN)).thenReturn(secretKeyAccessToken);
+    when(secretKeyService.getKey(TokenType.REFRESH_TOKEN)).thenReturn(secretKeyRefreshToken);
     jwtService.init();
     Date now = new Date();
     long expireTime = now.getTime() + 1000 * 60 * 5;

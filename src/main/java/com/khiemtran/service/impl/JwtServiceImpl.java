@@ -28,8 +28,8 @@ public class JwtServiceImpl implements JwtService {
 
   @PostConstruct
   public void init() {
-    secretKeyAccessToken = secretKeyService.getKey(yamlConfig, TokenType.ACCESS_TOKEN);
-    secretKeyRefreshToken = secretKeyService.getKey(yamlConfig, TokenType.REFRESH_TOKEN);
+    secretKeyAccessToken = secretKeyService.getKey(TokenType.ACCESS_TOKEN);
+    secretKeyRefreshToken = secretKeyService.getKey(TokenType.REFRESH_TOKEN);
   }
 
   @Override
@@ -66,7 +66,7 @@ public class JwtServiceImpl implements JwtService {
   }
 
   private SecretKey getKey(TokenType type) {
-    return secretKeyService.getKey(yamlConfig, type);
+    return secretKeyService.getKey(type);
   }
 
   private boolean isTokenExpired(String token, TokenType type) {

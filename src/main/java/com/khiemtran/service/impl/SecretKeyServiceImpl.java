@@ -4,7 +4,7 @@ import com.khiemtran.config.YamlConfig;
 import com.khiemtran.constants.TokenType;
 import com.khiemtran.service.SecretKeyService;
 import io.jsonwebtoken.security.Keys;
-import org.apache.commons.lang3.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -16,15 +16,15 @@ import static com.khiemtran.constants.TokenType.ACCESS_TOKEN;
 import static com.khiemtran.constants.TokenType.REFRESH_TOKEN;
 
 @Service
+@RequiredArgsConstructor
 public class SecretKeyServiceImpl implements SecretKeyService {
+  private final YamlConfig yamlConfig;
+
   @Override
-  public SecretKey getKey(YamlConfig yamlConfig, TokenType type) {
+  public SecretKey getKey(TokenType type) {
     YamlConfig.Jwt jwt = yamlConfig.getJwt();
     String jwtSecret = jwt.getJwtSecret();
     String refreshJwtSecret = jwt.getRefreshJwtSecret();
-    if (StringUtils.isBlank(jwtSecret) || StringUtils.isBlank(refreshJwtSecret)) {
-      throw new RuntimeException();
-    }
     byte[] keyBytes = new byte[0];
     if (ACCESS_TOKEN.equals(type)) {
       keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
