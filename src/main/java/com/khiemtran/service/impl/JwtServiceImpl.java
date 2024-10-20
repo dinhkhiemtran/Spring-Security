@@ -22,7 +22,6 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
   private final SecretKeyService secretKeyService;
-  private final YamlConfig yamlConfig;
   private SecretKey secretKeyAccessToken;
   private SecretKey secretKeyRefreshToken;
 
