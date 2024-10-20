@@ -53,7 +53,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   public UserResponse register(SignUpRequest request) {
     if (userRepository.existsByEmail(request.email())) {
-      log.error("Registration attempt failed: User with email {} already exists.", request.email());
       throw new EmailNotFoundException("User already exists.");
     }
     Role roles = getRoles();
@@ -85,15 +84,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throw new IllegalArgumentException("Authentication Invalid.");
     }
     long expireTime = getExpireTime(new Date());
-    String accessToken = jwtService.generateToken(
-        userPrincipal,
-        ACCESS_TOKEN,
-        getExpireTime(new Date()));
+    String accessToken = jwtService.generateToken(userPrincipal, ACCESS_TOKEN, getExpireTime(new Date()));
     log.info("Generated access token for user '{}': {}", userPrincipal.getUsername(), accessToken);
-    String refreshToken = jwtService.generateRefreshToken(
-        userPrincipal,
-        TokenType.REFRESH_TOKEN,
-        getExpireDay(new Date()));
+    String refreshToken = jwtService.generateRefreshToken(userPrincipal, TokenType.REFRESH_TOKEN, getExpireDay(new Date()));
     log.info("Generated refresh token for user '{}': {}", userPrincipal.getUsername(), refreshToken);
     tokenService.save(new Token(accessToken, refreshToken, userPrincipal.getEmail()));
     return new AccessTokenResponse(accessToken, refreshToken, expireTime);
@@ -102,20 +95,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   public AccessTokenResponse refresh(HttpServletRequest request) {
     String refreshToken = Optional.ofNullable(request.getHeader(REFRESH_TOKEN))
-        .orElseThrow(() -> {
-          log.error("Refresh token is missing in the request.");
-          return new IllegalArgumentException("Refresh token is required.");
-        });
+        .orElseThrow(() -> new IllegalArgumentException("Refresh token is required."));
     String email = jwtService.extractToken(refreshToken, TokenType.REFRESH_TOKEN);
     log.info("Extracted email from refresh token: {}", email);
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> {
-          log.error("User not found for email: {}", email);
-          return new EmailNotFoundException("Not found email: " + email, HttpStatus.UNAUTHORIZED);
-        });
+        .orElseThrow(() -> new EmailNotFoundException("Not found email: " + email, HttpStatus.UNAUTHORIZED));
     UserPrincipal userPrincipal = new UserPrincipal(user);
     if (!jwtService.isValidationToken(refreshToken, TokenType.REFRESH_TOKEN, userPrincipal)) {
-      log.error("Invalid refresh token provided for user: {}", email);
       throw new IllegalArgumentException("Refresh token invalid.");
     }
     long expireTime = getExpireTime(new Date());
