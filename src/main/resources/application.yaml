@@ -1,4 +1,7 @@
 spring:
+  output:
+    ansi:
+      enabled: always
   application:
     name: "spring-security"
     white-list:
@@ -41,6 +44,9 @@ openapi:
 
 logging:
   level:
+    root: "INFO"
     org:
       springframework:
-        web=DEBUG:
+        web: "INFO"
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m %X{Remote_Address} %clr(%n%wEx){red}"

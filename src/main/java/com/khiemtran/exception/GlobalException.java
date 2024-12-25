@@ -45,13 +45,6 @@ public class GlobalException {
     return new ValidationErrorResponse(allErrors);
   }
 
-  @ExceptionHandler(JwKeyNotRegisteredException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ModelException jwKeyNotRegisteredExceptionHandler(JwKeyNotRegisteredException e) {
-    log.error(e.getMessage(), e);
-    return new ModelException(e.getMessage(), HttpStatus.UNAUTHORIZED);
-  }
-
   @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ModelException usernameNotFoundException(ResourceNotFoundException e) {

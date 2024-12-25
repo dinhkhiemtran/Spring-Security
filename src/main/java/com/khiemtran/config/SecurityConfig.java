@@ -13,7 +13,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,7 +23,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
@@ -33,21 +31,10 @@ import java.util.Optional;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
-  private final String[] WHITE_LIST = new String[]{"/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**"};
   private final UserDetailsServiceImp userDetailsServiceImp;
   private final YamlConfig yamlConfig;
   private final JwtService jwtService;
   private final TokenService tokenService;
-
-  @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("**")
-        .allowedOrigins("http://localhost:4200")
-        .allowedMethods("GET", "POST", "PUT", "DELETE")
-        .allowedHeaders("*")
-        .allowCredentials(false)
-        .maxAge(3600);
-  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -77,16 +64,6 @@ public class SecurityConfig implements WebMvcConfigurer {
   }
 
   @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    RequestMatcher[] whiteList = Arrays.stream(WHITE_LIST)
-        .map(AntPathRequestMatcher::antMatcher)
-        .toArray(RequestMatcher[]::new);
-    return webSecurityCustomizer ->
-        webSecurityCustomizer.ignoring()
-            .requestMatchers(whiteList);
-  }
-
-  @Bean
   public AuthenticationEntryPoint getAuthenticationEntryPoint() {
     return (request, response, authException) ->
         response.sendError(response.SC_UNAUTHORIZED, authException.getMessage());
@@ -99,7 +76,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() {
-    return new JwtAuthenticationFilter(jwtService, userDetailsServiceImp,tokenService);
+    return new JwtAuthenticationFilter(jwtService, userDetailsServiceImp, tokenService);
   }
 
   @Bean
