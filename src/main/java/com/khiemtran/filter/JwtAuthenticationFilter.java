@@ -14,7 +14,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -34,15 +33,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String bearerToken = request.getHeader("Authorization");
     if (isBearerTokenValid(bearerToken)) {
       String token = extractToken(bearerToken);
-      log.info("Access token successfully retrieved from bearer token: {}", token);
       String email = jwtService.extractToken(token, TokenType.ACCESS_TOKEN);
-      log.info("Email successfully extracted from access token: {}", email);
-      if (isTokenLoggedOutOrUnauthenticated(email, request)) {
-        log.info("Token is logged out or user is already authenticated; proceeding without re-authentication.");
+      if (isTokenLoggedOutOrUnauthenticated(email)) {
         filterChain.doFilter(request, response);
         return;
       }
-      log.info("Token is valid and user is not authenticated; proceeding with authentication.");
       authenticateRequest(request, token, email);
     }
     filterChain.doFilter(request, response);
@@ -56,9 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     return bearerToken.substring(7);
   }
 
-  private boolean isTokenLoggedOutOrUnauthenticated(String email, HttpServletRequest request) {
-    return tokenService.isTokenLoggedOut(email) ||
-        SecurityContextHolder.getContext().getAuthentication() != null;
+  private boolean isTokenLoggedOutOrUnauthenticated(String email) {
+    return tokenService.isTokenLoggedOut(email) || SecurityContextHolder.getContext().getAuthentication() != null;
   }
 
   private void authenticateRequest(HttpServletRequest request, String token, String email) {
@@ -66,17 +60,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       UserPrincipal userPrincipal = (UserPrincipal) userDetailsServiceImp.loadUserByUsername(email);
       if (jwtService.isValidationToken(token, TokenType.ACCESS_TOKEN, userPrincipal)) {
         setAuthenticationContext(request, userPrincipal);
-        log.info("Authentication Details: " + SecurityContextHolder.getContext().getAuthentication().getDetails());
       }
     }
   }
 
   private void setAuthenticationContext(HttpServletRequest request, UserPrincipal userPrincipal) {
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
     UsernamePasswordAuthenticationToken authentication =
         new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    context.setAuthentication(authentication);
-    SecurityContextHolder.setContext(context);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }

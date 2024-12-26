@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 
 @Data
 public class ValidationErrorResponse {
-  List<FieldError> fieldErrors;
+  private List<FieldError> fieldErrors;
 
   public ValidationErrorResponse(List<ObjectError> allErrors) {
     this.fieldErrors = allErrors.stream()
-        .map(field -> new FieldError(field.getDefaultMessage()))
+        .map(error -> new FieldError(error.getDefaultMessage()))
         .collect(Collectors.toList());
   }
 }
@@ -21,8 +21,7 @@ public class ValidationErrorResponse {
 class FieldError {
   private String message;
 
-  public FieldError(String defaultMessage) {
-    this.message = defaultMessage;
+  public FieldError(String message) {
+    this.message = message;
   }
 }
-

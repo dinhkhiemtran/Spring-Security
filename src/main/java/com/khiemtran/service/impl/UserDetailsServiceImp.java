@@ -19,8 +19,8 @@ public class UserDetailsServiceImp implements UserDetailsService {
   @Override
   @Transactional
   public UserDetails loadUserByUsername(String email) {
-    User user = userRepository.findByEmail(email)
+    return userRepository.findByEmail(email)
+        .map(UserPrincipal::new)
         .orElseThrow(() -> new EmailNotFoundException("User not found email: " + email, HttpStatus.UNAUTHORIZED));
-    return new UserPrincipal(user);
   }
 }

@@ -16,9 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-
 public class OpenApiConfig {
-
   @Bean
   public OpenAPI customOpenAPI(@Value("${openapi.service.title}") String title,
                                @Value("${openapi.service.license.name}") String name,
@@ -26,28 +24,25 @@ public class OpenApiConfig {
                                @Value("${openapi.service.license.url}") String url,
                                @Value("${openapi.service.version}") String version,
                                @Value("${openapi.service.description}") String description) {
-    License licenseInfo = new License();
-    licenseInfo.setName(name);
-    licenseInfo.setExtensions(Map.of("SPDX", "MIT",
-        "OSI Approved", "Yes"));
-    licenseInfo.setIdentifier(identifier);
-    licenseInfo.setUrl(url);
+    License licenseInfo = new License()
+        .name(name)
+        .extensions(Map.of("SPDX", "MIT", "OSI Approved", "Yes"))
+        .identifier(identifier)
+        .url(url);
     return new OpenAPI()
         .info(new Info()
             .title(title)
             .version(version)
             .description(description)
             .license(licenseInfo))
-        .servers(List.of(new Server()
-            .url("http://localhost:8080/")))
+        .servers(List.of(new Server().url("http://localhost:8080/")))
         .components(new Components()
             .addSecuritySchemes("bearerAuth",
                 new SecurityScheme()
                     .type(SecurityScheme.Type.HTTP)
                     .scheme("bearer")
                     .bearerFormat("JWT")))
-        .security(List.of(new SecurityRequirement()
-            .addList("bearerAuth")));
+        .security(List.of(new SecurityRequirement().addList("bearerAuth")));
   }
 
   @Bean

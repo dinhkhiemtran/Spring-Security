@@ -43,11 +43,7 @@ public class User extends AbstractEntity<Long> {
   }
 
   public User(String username, String password, String email, String zipCode, String city, Set<Role> roles) {
-    this.username = username;
-    this.password = password;
-    this.email = email;
-    this.zipCode = zipCode;
-    this.city = city;
+    this(username, password, email, zipCode, city);
     this.roles = roles;
   }
 }

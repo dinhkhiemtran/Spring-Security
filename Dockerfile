@@ -1,32 +1,26 @@
-# Start with an official Maven image to build the app
+# Stage 1: Build stage
 FROM maven:3.9.4-eclipse-temurin-21 AS build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the pom.xml file to download dependencies
+# Copy only the pom.xml and go offline to cache dependencies
 COPY pom.xml .
-
-# Download project dependencies without the source code
 RUN mvn dependency:go-offline -B
 
-# Copy the entire source code into the container
+# Copy the source code and package the application
 COPY src ./src
-
-# Package the application
 RUN mvn clean package -DskipTests
 
-# Start from a smaller base image for running the app
-FROM eclipse-temurin:21-jre
+# Stage 2: Runtime stage
+FROM eclipse-temurin:21-jre-alpine
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the packaged JAR from the build stage
+# Copy the packaged jar file from the build stage
 COPY --from=build /app/target/security-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose the port Spring Boot runs on
+# Expose the application port
 EXPOSE 8080
 
-# Run the application
+# Set the entry point to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

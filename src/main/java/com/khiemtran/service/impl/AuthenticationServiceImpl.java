@@ -24,9 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,14 +54,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throw new EmailNotFoundException("User already exists.");
     }
     Role roles = getRoles();
-    User userEntity = new User(
+    User user = userRepository.save(new User(
         request.username(),
         passwordEncoder.encode(request.password()),
         request.email(),
         request.zipCode(),
         request.city(),
-        Collections.singleton(roles));
-    User user = userRepository.save(userEntity);
+        Collections.singleton(roles)));
     log.info("User successfully registered with username: {} and email: {}", user.getUsername(), user.getEmail());
     return new UserResponse(user.getUsername(), user.getEmail(), user.getZipCode(), user.getCity());
   }
@@ -72,22 +69,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public AccessTokenResponse authenticate(LoginRequest loginRequest) {
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    context.setAuthentication(authentication);
-    SecurityContextHolder.setContext(context);
-    UserPrincipal userPrincipal;
-    if (authentication.getPrincipal() instanceof UserDetails) {
-      userPrincipal = (UserPrincipal) authentication.getPrincipal();
-      log.info("Successfully extracted UserPrincipal from authentication: {}", userPrincipal.getUsername());
-    } else {
-      log.error("Authentication principal is not an instance of UserDetails. Authentication object: {}", authentication);
-      throw new IllegalArgumentException("Authentication Invalid.");
-    }
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
     long expireTime = getExpireTime(new Date());
-    String accessToken = jwtService.generateToken(userPrincipal, ACCESS_TOKEN, getExpireTime(new Date()));
-    log.info("Generated access token for user '{}': {}", userPrincipal.getUsername(), accessToken);
+    String accessToken = jwtService.generateToken(userPrincipal, ACCESS_TOKEN, expireTime);
     String refreshToken = jwtService.generateRefreshToken(userPrincipal, TokenType.REFRESH_TOKEN, getExpireDay(new Date()));
-    log.info("Generated refresh token for user '{}': {}", userPrincipal.getUsername(), refreshToken);
     tokenService.save(new Token(accessToken, refreshToken, userPrincipal.getEmail()));
     return new AccessTokenResponse(accessToken, refreshToken, expireTime);
   }
@@ -97,7 +83,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     String refreshToken = Optional.ofNullable(request.getHeader(REFRESH_TOKEN))
         .orElseThrow(() -> new IllegalArgumentException("Refresh token is required."));
     String email = jwtService.extractToken(refreshToken, TokenType.REFRESH_TOKEN);
-    log.info("Extracted email from refresh token: {}", email);
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new EmailNotFoundException("Not found email: " + email, HttpStatus.UNAUTHORIZED));
     UserPrincipal userPrincipal = new UserPrincipal(user);
@@ -107,16 +92,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     long expireTime = getExpireTime(new Date());
     String accessToken = jwtService.generateToken(userPrincipal, ACCESS_TOKEN, expireTime);
     tokenService.save(new Token(accessToken, refreshToken, userPrincipal.getEmail()));
-    log.info("Access token generated and saved successfully for user: {}", email);
     return new AccessTokenResponse(accessToken, refreshToken, expireTime);
   }
 
   @Override
   public void logout(String accessToken) {
     String email = jwtService.extractToken(accessToken, ACCESS_TOKEN);
-    log.info("Successfully extracted email {} from access token.", email);
     tokenService.delete(email);
-    log.info("User with email {} has been logged out and their token has been invalidated.", email);
   }
 
   private long getExpireTime(Date current) {

@@ -15,25 +15,21 @@ public class RequestInterceptorConfig implements HandlerInterceptor {
   private static final String START_TIME = "start_time";
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    Long startTime = System.currentTimeMillis();
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    long startTime = System.currentTimeMillis();
     Optional.ofNullable(request.getRemoteAddr())
-        .ifPresent(remoteAddress ->
-            ThreadContext.put("Remote_Address", "using " + remoteAddress));
+        .ifPresent(remoteAddress -> ThreadContext.put("Remote_Address", remoteAddress));
     request.setAttribute(START_TIME, startTime);
-    log.info("Request Started: [Method:{}, RequestId:{}, URI:{}, Timestamp:{}]",
-        request.getMethod(),
-        request.getRequestId(), request.getRequestURI(), startTime);
+    log.info("Request Started: [Method:{}, URI:{}, Timestamp:{}]",
+        request.getMethod(), request.getRequestURI(), startTime);
     return true;
   }
 
   @Override
-  public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-    Long endTime = System.currentTimeMillis();
-    Long attribute = (Long) request.getAttribute(START_TIME);
-    Optional.ofNullable(attribute)
-        .ifPresent(startTime -> {
-          log.info("Complete Request [Status code:{}, Timestamp:{}, Duration:{}ms]", response.getStatus(), endTime, endTime - startTime);
-        });
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    long endTime = System.currentTimeMillis();
+    Optional.ofNullable((Long) request.getAttribute(START_TIME))
+        .ifPresent(startTime -> log.info("Request Completed: [Status:{}, Duration:{}ms]",
+            response.getStatus(), endTime - startTime));
   }
 }

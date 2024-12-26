@@ -16,7 +16,7 @@ public class YamlConfig {
   public static class Jwt {
     private String jwtSecret;
     private String refreshJwtSecret;
-    private Integer expireTime;
-    private Integer expireDay;
+    private int expireTime;
+    private int expireDay;
   }
 }

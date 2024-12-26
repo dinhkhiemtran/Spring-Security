@@ -25,7 +25,7 @@ import java.util.List;
 public class UserController {
   private final UserService userService;
 
-  @GetMapping(value = "/user")
+  @GetMapping("/user")
   @Operation(summary = "Get Users", description = "Retrieve list of users", responses = {
       @ApiResponse(responseCode = "200", description = "Get Users",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(description = "List Users"))),
@@ -34,11 +34,10 @@ public class UserController {
       @ApiResponse(responseCode = "401", description = "Unauthorized",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
   public ResponseEntity<List<UserResponse>> getAllUsers() {
-    List<UserResponse> users = userService.getAllUsers();
-    return new ResponseEntity<>(users, HttpStatus.OK);
+    return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
   }
 
-  @PutMapping(value = "/user")
+  @PutMapping("/user")
   @Operation(summary = "Update User", description = "Update user information", responses = {
       @ApiResponse(responseCode = "200", description = "Access token & Expire time",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
@@ -48,12 +47,11 @@ public class UserController {
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))})
   public ResponseEntity<String> updateUser(@RequestParam("email") String email,
                                            @RequestBody @Valid UserRequest userRequest) {
-    UserRequest userRequestSanitized = userRequest.sanitize(userRequest);
-    userService.updateUser(SanitizerUtils.sanitizeString(email), userRequestSanitized);
+    userService.updateUser(SanitizerUtils.sanitizeString(email), userRequest.sanitize(userRequest));
     return new ResponseEntity<>("User is updated successfully.", HttpStatus.OK);
   }
 
-  @DeleteMapping(value = "/user/{email}")
+  @DeleteMapping("/user/{email}")
   @Operation(summary = "Delete User", description = "Delete user information", responses = {
       @ApiResponse(responseCode = "200", description = "Remove User",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),

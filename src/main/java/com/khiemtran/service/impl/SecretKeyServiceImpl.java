@@ -13,7 +13,6 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 import static com.khiemtran.constants.TokenType.ACCESS_TOKEN;
-import static com.khiemtran.constants.TokenType.REFRESH_TOKEN;
 
 @Service
 @RequiredArgsConstructor
@@ -22,23 +21,13 @@ public class SecretKeyServiceImpl implements SecretKeyService {
 
   @Override
   public SecretKey getKey(TokenType type) {
-    YamlConfig.Jwt jwt = yamlConfig.getJwt();
-    String jwtSecret = jwt.getJwtSecret();
-    String refreshJwtSecret = jwt.getRefreshJwtSecret();
-    byte[] keyBytes = new byte[0];
-    if (ACCESS_TOKEN.equals(type)) {
-      keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
-    }
-    if (REFRESH_TOKEN.equals(type)) {
-      keyBytes = refreshJwtSecret.getBytes(StandardCharsets.UTF_8);
-    }
-    return Keys.hmacShaKeyFor(keyBytes);
+    String secret = ACCESS_TOKEN.equals(type) ? yamlConfig.getJwt().getJwtSecret() : yamlConfig.getJwt().getRefreshJwtSecret();
+    return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
   }
 
   public static String randomJwtSecret() {
-    SecureRandom random = new SecureRandom();
     byte[] key = new byte[128];
-    random.nextBytes(key);
+    new SecureRandom().nextBytes(key);
     return Base64.getEncoder().encodeToString(key);
   }
 }

@@ -33,13 +33,11 @@ public class AuthController {
   @Operation(summary = "Sign Up", description = "Create new user", responses = {
       @ApiResponse(responseCode = "201", description = "User is created successfully",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string"))),
-      @ApiResponse(responseCode = "400",
-          description = "Invalid input",
+      @ApiResponse(responseCode = "400", description = "Invalid input",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(type = "string")))
   })
   public ResponseEntity<String> signup(@Valid @RequestBody SignUpRequest request) {
-    SignUpRequest sanitized = request.sanitize(request);
-    UserResponse userResponse = authenticationService.register(sanitized);
+    UserResponse userResponse = authenticationService.register(request.sanitize(request));
     URI location = ServletUriComponentsBuilder
         .fromCurrentContextPath().path(URI_LOCATION)
         .buildAndExpand(userResponse.username()).toUri();
@@ -59,8 +57,7 @@ public class AuthController {
   })
   public ResponseEntity<AccessTokenResponse> login(@RequestHeader String email, @RequestHeader String password) {
     LoginRequest loginRequest = new LoginRequest(email, password);
-    LoginRequest sanitized = loginRequest.sanitize(loginRequest);
-    return new ResponseEntity<>(authenticationService.authenticate(sanitized), HttpStatus.OK);
+    return new ResponseEntity<>(authenticationService.authenticate(loginRequest.sanitize(loginRequest)), HttpStatus.OK);
   }
 
   @PostMapping(value = "/refresh")
