@@ -34,6 +34,6 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   public boolean isTokenLoggedOut(String email) {
-    return !(tokenRepository.existsByEmail(email));
+    return !tokenRepository.existsByEmail(email);
   }
 }

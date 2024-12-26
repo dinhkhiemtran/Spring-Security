@@ -22,8 +22,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserResponse> getAllUsers() {
-    List<User> users = userRepository.findAll();
-    return users.stream()
+    return userRepository.findAll().stream()
         .map(user -> new UserResponse(
             user.getUsername(),
             user.getEmail(),
@@ -38,9 +37,9 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new EmailNotFoundException("User not found with email: " + email));
     user.setUsername(Optional.ofNullable(userRequest.username())
         .orElse(user.getUsername()));
-    user.setPassword(
-        Optional.ofNullable(passwordEncoder.encode(userRequest.password()))
-            .orElse(user.getPassword()));
+    user.setPassword(Optional.ofNullable(userRequest.password())
+        .map(passwordEncoder::encode)
+        .orElse(user.getPassword()));
     user.setEmail(Optional.ofNullable(userRequest.email())
         .orElse(user.getEmail()));
     user.setZipCode(Optional.ofNullable(userRequest.zipCode())

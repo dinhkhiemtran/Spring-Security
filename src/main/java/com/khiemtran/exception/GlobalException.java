@@ -16,71 +16,53 @@ import java.util.List;
 @RestControllerAdvice
 @Slf4j
 public class GlobalException {
-  @ExceptionHandler(IllegalArgumentException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ModelException illegalArgumentExceptionHandler(IllegalArgumentException e) {
-    log.error(e.getMessage(), e);
-    return new ModelException(e.getMessage(), HttpStatus.UNAUTHORIZED);
-  }
 
-  @ExceptionHandler(EmailNotFoundException.class)
+  @ExceptionHandler({
+      IllegalArgumentException.class,
+      EmailNotFoundException.class,
+      RoleNotFoundException.class,
+      ResourceNotFoundException.class
+  })
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ModelException emailNotFoundExceptionHandler(EmailNotFoundException e) {
-    log.error(e.getMessage(), e);
-    return new ModelException(e.getMessage(), HttpStatus.UNAUTHORIZED);
-  }
-
-  @ExceptionHandler(RoleNotFoundException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ModelException roleNotFoundExceptionHandler(RoleNotFoundException e) {
+  public ModelException handleUnauthorizedExceptions(RuntimeException e) {
     log.error(e.getMessage(), e);
     return new ModelException(e.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ValidationErrorResponse methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-    List<ObjectError> allErrors = e.getAllErrors();
+  public ValidationErrorResponse handleValidationExceptions(MethodArgumentNotValidException e) {
     log.error(e.getMessage(), e);
-    return new ValidationErrorResponse(allErrors);
-  }
-
-  @ExceptionHandler(ResourceNotFoundException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ModelException usernameNotFoundException(ResourceNotFoundException e) {
-    log.error(e.getMessage(), e);
-    return new ModelException(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    return new ValidationErrorResponse(e.getAllErrors());
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ModelException httpRequestMethodNotSupportedExceptionHandler(
-      HttpRequestMethodNotSupportedException e) {
+  public ModelException handleMethodNotSupported(HttpRequestMethodNotSupportedException e) {
     log.error(e.getMessage(), e);
     return new ModelException(e.getMessage(), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(NoResourceFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ModelException noResourceFoundException(NoResourceFoundException e) {
+  public ModelException handleNoResourceFound(NoResourceFoundException e) {
     log.error(e.getMessage(), e);
     return new ModelException(e.getMessage(), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public List<ViolationException> constraintViolationExceptionHandler(ConstraintViolationException e) {
+  public List<ViolationException> handleConstraintViolations(ConstraintViolationException e) {
     log.error(e.getMessage(), e);
-    return e.getConstraintViolations()
-        .stream().map(er -> new ViolationException(er.getMessage()))
+    return e.getConstraintViolations().stream()
+        .map(violation -> new ViolationException(violation.getMessage()))
         .toList();
   }
 
   @ExceptionHandler(RuntimeException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ModelException runtimeExceptionHandler(RuntimeException e) {
+  public ModelException handleRuntimeExceptions(RuntimeException e) {
     log.error(e.getMessage(), e);
     return new ModelException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
-

@@ -39,10 +39,8 @@ public class SystemConfig implements WebMvcConfigurer {
   @Bean
   public WebSecurityCustomizer webSecurityCustomizer() {
     RequestMatcher[] whiteList = Arrays.stream(WHITE_LIST)
-        .map(AntPathRequestMatcher::antMatcher)
+        .map(AntPathRequestMatcher::new)
         .toArray(RequestMatcher[]::new);
-    return webSecurityCustomizer ->
-        webSecurityCustomizer.ignoring()
-            .requestMatchers(whiteList);
+    return webSecurity -> webSecurity.ignoring().requestMatchers(whiteList);
   }
 }

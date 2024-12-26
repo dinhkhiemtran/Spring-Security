@@ -39,7 +39,8 @@ public class SecurityConfig implements WebMvcConfigurer {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     RequestMatcher[] pathAllowed = getRequestMatchers();
-    return httpSecurity.cors(AbstractHttpConfigurer::disable)
+    return httpSecurity
+        .cors(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(pathAllowed).permitAll()
@@ -59,7 +60,7 @@ public class SecurityConfig implements WebMvcConfigurer {
   private RequestMatcher[] getRequestMatchers() {
     return Arrays.stream(Optional.ofNullable(yamlConfig.getWhiteList())
             .orElse(new String[0]))
-        .map(AntPathRequestMatcher::antMatcher)
+        .map(AntPathRequestMatcher::new)
         .toArray(RequestMatcher[]::new);
   }
 
