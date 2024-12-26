@@ -77,45 +77,21 @@ Spring Security is configured to secure the endpoints of the application. JWT is
 ```yaml
 ### Spring Security
 spring:
-  application:
-    name: "spring-security"
-    path-allowed:
-      - /greeting/**
-      - /api/v1/sign-up
-      - /api/v1/login
-      - /h2-console/**
-      - /swagger-ui/**
-      - /v3/api-docs/**
-    jwt:
-      jwt-secret: "1LpA33BCD+ChEC+mrOcu7g+nrAJmyT2qnoxmXuzbK1d9gN2q55ql5bOYTIPJTmJqnplNWFNyIsaQoWUVWDkAugXhCGYqgAhLy/kJ5O64ocWYVCs+OQinaynVGeE0Jh3WXfOqB8TEi42GZSwRbbLy8ea8QUegRJok+KXK9gD8GaA="
-      expire-time: "300"
-      
-### H2 Database      
-  h2:
-    console:
-      enabled: "true"
-  datasource:
-    url: "jdbc:h2:mem:testdb"
-    driverClassName: "org.h2.Driver"
-    username: "sa"
-    password: "password"
-
-### JPA 
-  jpa:
-    database-platform: "org.hibernate.dialect.H2Dialect"
-    defer-datasource-initialization: true
-
-### SQL
-  sql:
-    init:
-      mode: "always"
-
-### Logging
+  output.ansi.enabled: always
+openapi:
+  service:
+    title: "API Spring Security Service Document"
+    version: "v1.0.0"
+    description: "Api security service for {profile}"
+    license:
+      name: "API License"
+      identifier: "MIT"
+      url: "https://{profile}-server:8080/api-docs"
 logging:
   level:
-    org:
-      springframework:
-        web=DEBUG:
+    root: INFO
+    org.springframework.web: INFO
+  pattern.console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m %X{Remote_Address} %clr(%n%wEx){red}"
 ```
 
 ### Running the Application
@@ -134,4 +110,26 @@ The application uses H2 as the in-memory database. The H2 console is available a
 Swagger provides interactive API documentation. You can test the API endpoints directly from the Swagger UI.
 
  http://localhost:8080/swagger-ui/index.html
+
+# Guide to activating profile
+
+### Activate via applciation.yaml
+```yaml 
+spring:
+  profiles:
+    active: local
+```
+### Activate via command line
+```bash
+java -jar myapp.jar --spring.profiles.active=local
+``` 
+### Activate via environment variable
+#### On Linux/MacOS:
+```bash 
+export SPRING_PROFILES_ACTIVE=local
+```
+#### On Windows:
+```bash
+set SPRING_PROFILES_ACTIVE=local
+```
 
